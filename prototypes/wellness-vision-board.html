@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>My Wellness Vision Board | Habuild</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Caveat:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sky-50:  #f0f9ff;
+      --sky-100: #e0f2fe;
+      --sky-200: #bae6fd;
+      --sky-500: #0ea5e9;
+      --sky-600: #0284c7;
+      --sky-700: #0369a1;
+      --slate-50:  #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--slate-200);
+      color: var(--slate-800);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      background: var(--slate-50);
+    }
+
+    .progress-bar {
+      position: fixed; top: 0;
+      left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 430px;
+      height: 3px; background: var(--slate-200); z-index: 100;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sky-400, #38bdf8), var(--sky-600));
+      transition: width 0.4s ease;
+    }
+
+    .screen { display: none; min-height: 100vh; flex-direction: column; animation: fadeUp 0.3s ease; }
+    .screen.active { display: flex; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SCREEN 1 ── */
+    .s1-nav {
+      padding: 20px 24px 0;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .logo-mark { width: 38px; height: 38px; flex-shrink: 0; }
+    .logo-mark img { width: 38px; height: 38px; border-radius: 10px; display: block; }
+    .logo-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px; font-weight: 800;
+      color: var(--slate-800);
+    }
+
+    .s1-hero {
+      background: linear-gradient(160deg, var(--sky-50) 0%, var(--sky-100) 100%);
+      margin: 16px 16px 0;
+      border-radius: 20px;
+      padding: 20px 18px 18px;
+      border: 1px solid var(--sky-200);
+    }
+    .s1-hero-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--sky-600); color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px; font-weight: 600;
+      padding: 5px 12px; border-radius: 50px;
+      margin-bottom: 14px; letter-spacing: 0.3px;
+    }
+
+    /* Mini board preview */
+    .s1-board-mini {
+      background: #C09050;
+      border-radius: 12px; padding: 12px;
+      box-shadow: 0 6px 20px rgba(100,60,10,0.25);
+      position: relative;
+    }
+    .s1-board-mini::before {
+      content: ''; position: absolute; inset: 0; border-radius: 12px;
+      background: repeating-conic-gradient(rgba(150,90,20,0.1) 0% 25%, transparent 0% 50%) 0 0 / 8px 8px;
+      pointer-events: none;
+    }
+    .s1-mini-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700; color: white;
+      text-align: center; margin-bottom: 10px;
+      position: relative; z-index: 1;
+      text-shadow: 1px 2px 3px rgba(0,0,0,0.3);
+    }
+    .s1-mini-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 7px; position: relative; z-index: 1;
+    }
+    .s1-mini-pol {
+      background: white; border-radius: 4px;
+      padding: 7px 4px 10px; text-align: center;
+      box-shadow: 2px 3px 8px rgba(0,0,0,0.22);
+      font-size: 20px; position: relative;
+    }
+    .s1-mini-pol:nth-child(1) { transform: rotate(-5deg); }
+    .s1-mini-pol:nth-child(2) { transform: rotate(3deg); }
+    .s1-mini-pol:nth-child(3) { transform: rotate(-2deg); }
+    .s1-mini-pol:nth-child(4) { transform: rotate(4deg); }
+    .s1-mini-pol:nth-child(5) { transform: rotate(-3deg); }
+    .s1-mini-pol:nth-child(6) { transform: rotate(2deg); }
+    .s1-mini-lbl {
+      font-family: 'Caveat', cursive;
+      font-size: 9px; font-weight: 600; color: #444; margin-top: 3px;
+    }
+    .s1-mini-pin {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--sky-500);
+      position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .s1-content { padding: 20px 24px 32px; }
+    .s1-content h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 28px; font-weight: 900;
+      line-height: 1.2; color: var(--slate-800); margin-bottom: 10px;
+    }
+    .s1-content h1 .blue { color: var(--sky-600); }
+    .s1-content .tagline {
+      font-size: 15px; color: var(--slate-500); line-height: 1.6; margin-bottom: 20px;
+    }
+    .s1-benefits { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+    .s1-benefit {
+      display: flex; align-items: center; gap: 12px;
+      background: white; border: 1px solid var(--slate-200);
+      border-radius: 12px; padding: 12px 14px;
+    }
+    .s1-benefit-icon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      background: var(--sky-50); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .s1-benefit-text strong {
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 700; color: var(--slate-800); display: block;
+    }
+    .s1-benefit-text span { font-size: 12px; color: var(--slate-500); }
+
+    .btn-primary {
+      width: 100%; background: var(--sky-600); color: white;
+      border: none; border-radius: 14px; padding: 16px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 16px rgba(2,132,199,0.35);
+      transition: transform 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled { background: var(--slate-200); color: var(--slate-400); box-shadow: none; cursor: not-allowed; }
+
+    .s1-social {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 12px; font-size: 12px; color: var(--slate-400);
+    }
+    .s1-social strong { color: var(--slate-600); }
+
+    /* ── SCREEN 2 ── */
+    .screen-top {
+      padding: 44px 24px 14px; background: var(--slate-50);
+      position: sticky; top: 0; z-index: 20;
+      border-bottom: 1px solid var(--slate-200);
+    }
+    .screen-top h2 { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 2px; }
+    .screen-top p { font-size: 13px; color: var(--slate-500); }
+
+    .counter-row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+    .counter-dots { display: flex; gap: 5px; }
+    .cdot { width: 24px; height: 5px; border-radius: 3px; background: var(--slate-200); transition: background 0.2s; }
+    .cdot.on { background: var(--sky-500); }
+    .counter-label { font-size: 12px; font-weight: 600; color: var(--slate-500); }
+
+    .habits-body { padding: 14px 24px 110px; overflow-y: auto; flex: 1; }
+    .habit-cat { margin-bottom: 22px; }
+    .cat-head {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px; font-weight: 700; color: var(--slate-600);
+      letter-spacing: 0.5px; text-transform: uppercase;
+      margin-bottom: 9px;
+    }
+    .chips-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      border: 1.5px solid var(--slate-200); background: white;
+      border-radius: 50px; padding: 8px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 500; color: var(--slate-700);
+      cursor: pointer; transition: all 0.18s;
+      -webkit-tap-highlight-color: transparent; user-select: none;
+    }
+    .chip.on {
+      border-color: var(--sky-500); background: var(--sky-50);
+      color: var(--sky-700); font-weight: 600;
+      box-shadow: 0 2px 8px rgba(14,165,233,0.2);
+    }
+    .chip.off { opacity: 0.35; pointer-events: none; }
+
+    .s2-sticky {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 430px;
+      padding: 12px 24px 28px;
+      background: linear-gradient(to top, var(--slate-50) 75%, transparent); z-index: 30;
+    }
+
+    /* ── SCREEN 3 ── */
+    .s3-body { padding: 44px 20px 100px; flex: 1; }
+    .s3-body h2 { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 3px; }
+    .s3-body > p { font-size: 13px; color: var(--slate-500); margin-bottom: 18px; }
+
+    /* Cork board */
+    .cork-board {
+      background: #C09050;
+      border-radius: 16px; padding: 16px 12px 14px;
+      margin-bottom: 22px;
+      box-shadow: 0 6px 24px rgba(100,60,10,0.28);
+      position: relative; overflow: hidden; min-height: 180px;
+    }
+    .cork-board::before {
+      content: ''; position: absolute; inset: 0; border-radius: 16px;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(160,100,20,0.06) 3px, rgba(160,100,20,0.06) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 5px, rgba(140,80,10,0.05) 5px, rgba(140,80,10,0.05) 6px),
+        radial-gradient(ellipse at 25% 20%, rgba(210,160,70,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 80%, rgba(90,45,5,0.18) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .board-title-row { text-align: center; margin-bottom: 12px; position: relative; z-index: 2; }
+    .board-main-title {
+      font-family: 'Caveat', cursive;
+      font-size: 22px; font-weight: 700; color: white;
+      text-shadow: 1px 2px 5px rgba(0,0,0,0.4); line-height: 1.15;
+    }
+
+    /* Polaroid cards — flex wrap with nth-child rotations */
+    .polaroid-grid {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center; position: relative; z-index: 2;
+    }
+    .polaroid {
+      background: white; border-radius: 3px;
+      box-shadow: 3px 4px 12px rgba(0,0,0,0.28);
+      padding: 5px 5px 0; width: 88px; position: relative;
+    }
+    .polaroid:nth-child(6n+1) { transform: rotate(-5deg); }
+    .polaroid:nth-child(6n+2) { transform: rotate(4deg); }
+    .polaroid:nth-child(6n+3) { transform: rotate(-2deg); }
+    .polaroid:nth-child(6n+4) { transform: rotate(6deg); }
+    .polaroid:nth-child(6n+5) { transform: rotate(-4deg); }
+    .polaroid:nth-child(6n)   { transform: rotate(3deg); }
+
+    .pol-pin {
+      width: 11px; height: 11px; border-radius: 50%;
+      position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.35); z-index: 3;
+    }
+    .polaroid.tape .pol-pin { display: none; }
+    .polaroid.tape::after {
+      content: ''; position: absolute;
+      top: -4px; left: 50%; transform: translateX(-50%);
+      width: 28px; height: 9px;
+      background: rgba(255,230,100,0.78); border-radius: 2px; z-index: 4;
+    }
+    .pol-photo {
+      width: 100%; aspect-ratio: 1; border-radius: 2px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; margin-bottom: 3px;
+    }
+    .pol-label {
+      font-family: 'Caveat', cursive;
+      font-size: 11px; font-weight: 600;
+      text-align: center; color: #333; line-height: 1.2;
+      padding: 3px 3px 6px;
+    }
+
+    .board-intention-strip {
+      margin-top: 10px;
+      background: rgba(255,248,210,0.88); border-radius: 5px;
+      padding: 6px 10px; font-family: 'Caveat', cursive;
+      font-size: 13px; color: #5C4010;
+      text-align: center; position: relative; z-index: 2;
+    }
+    .board-footer {
+      text-align: right; margin-top: 8px; position: relative; z-index: 2;
+      font-family: 'Poppins', sans-serif;
+      font-size: 9px; font-weight: 700;
+      color: rgba(255,255,255,0.45); letter-spacing: 1px;
+    }
+
+    /* Category photo gradients */
+    .cat-move    { background: linear-gradient(135deg, #FED7AA, #FB923C); }
+    .cat-breathe { background: linear-gradient(135deg, #BAE6FD, #38BDF8); }
+    .cat-eat     { background: linear-gradient(135deg, #BBF7D0, #34D399); }
+    .cat-mind    { background: linear-gradient(135deg, #DDD6FE, #A78BFA); }
+    .cat-body    { background: linear-gradient(135deg, #FECDD3, #FB7185); }
+    .cat-connect { background: linear-gradient(135deg, #FEF08A, #FBBF24); }
+
+    .pin-move    { background: #F97316; }
+    .pin-breathe { background: #0EA5E9; }
+    .pin-eat     { background: #10B981; }
+    .pin-mind    { background: #8B5CF6; }
+    .pin-body    { background: #F43F5E; }
+    .pin-connect { background: #F59E0B; }
+
+    /* Theme pills */
+    .section-label { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 700; color: var(--slate-700); margin-bottom: 10px; }
+    .themes-row {
+      display: flex; gap: 8px; margin-bottom: 22px;
+      overflow-x: auto; padding-bottom: 2px; scrollbar-width: none;
+    }
+    .themes-row::-webkit-scrollbar { display: none; }
+    .theme-pill {
+      flex-shrink: 0; border: 1.5px solid var(--slate-200);
+      background: white; border-radius: 50px; padding: 8px 16px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 600; color: var(--slate-600);
+      cursor: pointer; -webkit-tap-highlight-color: transparent; transition: all 0.18s;
+    }
+    .theme-pill.on { border-color: var(--sky-500); background: var(--sky-50); color: var(--sky-700); }
+
+    .field-label { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 700; color: var(--slate-700); margin-bottom: 4px; }
+    .field-sub { font-size: 12px; color: var(--slate-400); margin-bottom: 8px; }
+    .txt-area {
+      width: 100%; border: 1.5px solid var(--slate-200);
+      border-radius: 12px; padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; color: var(--slate-800);
+      background: white; resize: none; outline: none;
+      transition: border-color 0.2s;
+    }
+    .txt-area:focus { border-color: var(--sky-500); }
+    .char-count { text-align: right; font-size: 11px; color: var(--slate-400); margin-top: 4px; }
+
+    /* ── SCREEN 4 ── */
+    .s4-body { padding: 48px 24px 100px; flex: 1; }
+    .s4-body h2 { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+    .s4-body > p { font-size: 14px; color: var(--slate-500); line-height: 1.55; margin-bottom: 28px; }
+    .q-block { margin-bottom: 28px; }
+    .q-head { font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 11px; line-height: 1.4; }
+    .q-head span { color: var(--sky-600); }
+    .q-opts { display: flex; flex-direction: column; gap: 8px; }
+    .q-opt {
+      border: 1.5px solid var(--slate-200); border-radius: 12px; padding: 13px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 500; color: var(--slate-700);
+      cursor: pointer; background: white; text-align: left;
+      -webkit-tap-highlight-color: transparent; transition: all 0.18s;
+    }
+    .q-opt.on { border-color: var(--sky-500); background: var(--sky-50); color: var(--sky-700); font-weight: 600; }
+
+    /* ── SCREEN 5 ── */
+    .s5-body { padding: 44px 20px 36px; flex: 1; }
+    .s5-body h2 { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+    .s5-body > p { font-size: 13px; color: var(--slate-500); margin-bottom: 20px; }
+
+    .vision-board-wrap { display: flex; justify-content: center; margin-bottom: 22px; }
+    #visionBoard {
+      width: 340px;
+      background: #C09050;
+      border-radius: 16px; padding: 18px 14px 14px;
+      box-shadow: 0 10px 36px rgba(100,60,10,0.35), 4px 4px 0 rgba(0,0,0,0.08);
+      position: relative; overflow: hidden;
+    }
+    #visionBoard::before {
+      content: ''; position: absolute; inset: 0; border-radius: 16px;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(160,100,20,0.06) 3px, rgba(160,100,20,0.06) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 5px, rgba(140,80,10,0.05) 5px, rgba(140,80,10,0.05) 6px),
+        radial-gradient(ellipse at 25% 20%, rgba(210,160,70,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 80%, rgba(90,45,5,0.18) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .vb-header { text-align: center; margin-bottom: 14px; position: relative; z-index: 2; }
+    .vb-main-title {
+      font-family: 'Caveat', cursive;
+      font-size: 28px; font-weight: 700; color: white;
+      text-shadow: 2px 3px 6px rgba(0,0,0,0.4); line-height: 1.1;
+    }
+    .vb-main-title span { color: #FFD580; }
+    .vb-sub { font-family: 'Caveat', cursive; font-size: 15px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+    .vb-cards-area {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center; position: relative; z-index: 2;
+    }
+    .vb-pol {
+      background: white; border-radius: 3px;
+      box-shadow: 3px 5px 14px rgba(0,0,0,0.28);
+      padding: 6px 6px 0; width: 90px; flex-shrink: 0; position: relative;
+    }
+    .vb-pol:nth-child(6n+1) { transform: rotate(-6deg) translateY(3px); }
+    .vb-pol:nth-child(6n+2) { transform: rotate(5deg) translateY(-2px); }
+    .vb-pol:nth-child(6n+3) { transform: rotate(-3deg) translateY(5px); }
+    .vb-pol:nth-child(6n+4) { transform: rotate(7deg) translateY(-3px); }
+    .vb-pol:nth-child(6n+5) { transform: rotate(-5deg) translateY(2px); }
+    .vb-pol:nth-child(6n)   { transform: rotate(4deg) translateY(4px); }
+    .vb-pin {
+      width: 11px; height: 11px; border-radius: 50%;
+      position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.35); z-index: 3;
+    }
+    .vb-pol.tape .vb-pin { display: none; }
+    .vb-pol.tape::after {
+      content: ''; position: absolute;
+      top: -5px; left: 50%; transform: translateX(-50%);
+      width: 30px; height: 10px;
+      background: rgba(255,230,110,0.78); border-radius: 2px; z-index: 4;
+    }
+    .vb-photo {
+      width: 100%; aspect-ratio: 1; border-radius: 2px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; margin-bottom: 3px;
+    }
+    .vb-name {
+      font-family: 'Caveat', cursive;
+      font-size: 12px; font-weight: 700;
+      text-align: center; color: #2C1E08; line-height: 1.2;
+      padding: 3px 3px 6px;
+    }
+    .vb-intention {
+      margin-top: 12px;
+      background: rgba(255,250,210,0.88); border-radius: 5px;
+      padding: 8px 12px; font-family: 'Caveat', cursive;
+      font-size: 15px; color: #5C3E10;
+      text-align: center; position: relative; z-index: 2;
+    }
+    .vb-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 10px; position: relative; z-index: 2;
+    }
+    .vb-footer-brand {
+      font-family: 'Poppins', sans-serif;
+      font-size: 9px; font-weight: 800;
+      color: rgba(255,255,255,0.5); letter-spacing: 1.5px;
+    }
+    .vb-footer-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+    .vb-footer-url { font-family: 'Caveat', cursive; font-size: 12px; color: rgba(255,255,255,0.4); }
+
+    /* Login */
+    .login-card {
+      background: white; border: 1.5px solid var(--slate-200);
+      border-radius: 16px; padding: 20px; margin-bottom: 14px;
+    }
+    .login-card h3 { font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .login-card p { font-size: 13px; color: var(--slate-500); margin-bottom: 16px; }
+    .field-wrap { margin-bottom: 10px; }
+    .field-wrap label {
+      display: block; font-family: 'Poppins', sans-serif;
+      font-size: 12px; font-weight: 600; color: var(--slate-600); margin-bottom: 5px;
+    }
+    .txt-input {
+      width: 100%; border: 1.5px solid var(--slate-200); border-radius: 10px;
+      padding: 12px 14px; font-family: 'Inter', sans-serif;
+      font-size: 15px; color: var(--slate-800); background: white; outline: none;
+      transition: border-color 0.2s;
+    }
+    .txt-input:focus { border-color: var(--sky-500); }
+    .phone-row { display: flex; gap: 8px; }
+    .prefix {
+      background: var(--slate-100); border: 1.5px solid var(--slate-200);
+      border-radius: 10px; padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 600; color: var(--slate-600); flex-shrink: 0;
+    }
+
+    /* Share */
+    .share-section { display: none; }
+    .share-section h3 { font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+    .share-btn {
+      width: 100%; border: none; border-radius: 12px; padding: 14px 20px;
+      font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px; -webkit-tap-highlight-color: transparent; transition: opacity 0.18s;
+    }
+    .share-btn:active { opacity: 0.85; }
+    .btn-wa { background: #22C55E; color: white; }
+    .btn-dl { background: var(--slate-100); color: var(--slate-700); }
+    .share-note { text-align: center; font-size: 12px; color: var(--slate-400); margin-top: 14px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="progress-bar" id="progressBar" style="display:none">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+  </div>
+
+  <!-- SCREEN 1 -->
+  <div class="screen active" id="screen1">
+    <div class="s1-nav">
+      <div class="logo-mark"><img src="habuild-logo.png" alt="Habuild" /></div>
+      <div class="logo-name">Habuild</div>
+    </div>
+    <div style="padding:16px 16px 0">
+      <div class="s1-hero">
+        <div class="s1-hero-tag">✨ Free for all members</div>
+        <div class="s1-board-mini">
+          <div class="s1-mini-title">My Wellness Vision Board</div>
+          <div class="s1-mini-grid">
+            <div class="s1-mini-pol"><div class="s1-mini-pin"></div>🧘<div class="s1-mini-lbl">Yoga</div></div>
+            <div class="s1-mini-pol"><div class="s1-mini-pin" style="background:#38BDF8"></div>🌬️<div class="s1-mini-lbl">Breathing</div></div>
+            <div class="s1-mini-pol"><div class="s1-mini-pin" style="background:#34D399"></div>🥗<div class="s1-mini-lbl">Eat Well</div></div>
+            <div class="s1-mini-pol"><div class="s1-mini-pin" style="background:#A78BFA"></div>😴<div class="s1-mini-lbl">Sleep</div></div>
+            <div class="s1-mini-pol"><div class="s1-mini-pin" style="background:#FB7185"></div>🧠<div class="s1-mini-lbl">Mind</div></div>
+            <div class="s1-mini-pol"><div class="s1-mini-pin" style="background:#FBBF24"></div>🚶<div class="s1-mini-lbl">Walk</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="s1-content">
+      <h1>Build your<br><span class="blue">Wellness</span><br>Vision Board</h1>
+      <p class="tagline">Pick the habits you want this year. Get a beautiful board you'll want to look at every day.</p>
+      <div class="s1-benefits">
+        <div class="s1-benefit">
+          <div class="s1-benefit-icon">🎨</div>
+          <div class="s1-benefit-text">
+            <strong>A board that's yours</strong>
+            <span>Personalised to your goals, saved forever</span>
+          </div>
+        </div>
+        <div class="s1-benefit">
+          <div class="s1-benefit-icon">🧠</div>
+          <div class="s1-benefit-text">
+            <strong>Backed by habit science</strong>
+            <span>People who visualise goals are 3x more consistent</span>
+          </div>
+        </div>
+        <div class="s1-benefit">
+          <div class="s1-benefit-icon">📱</div>
+          <div class="s1-benefit-text">
+            <strong>Share with your people</strong>
+            <span>Send to WhatsApp, download as a poster</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="goTo(2)">Build My Board &rarr;</button>
+      <div class="s1-social">🌍 <span>Join <strong>1.42 crore members</strong> building healthy habits</span></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2 -->
+  <div class="screen" id="screen2">
+    <div class="screen-top">
+      <h2>Pick your habits</h2>
+      <p>Choose up to 6 habits you want to build</p>
+      <div class="counter-row">
+        <div class="counter-dots">
+          <div class="cdot" id="d0"></div><div class="cdot" id="d1"></div>
+          <div class="cdot" id="d2"></div><div class="cdot" id="d3"></div>
+          <div class="cdot" id="d4"></div><div class="cdot" id="d5"></div>
+        </div>
+        <span class="counter-label" id="cLabel">0 / 6</span>
+      </div>
+    </div>
+    <div class="habits-body">
+      <div class="habit-cat">
+        <div class="cat-head">🧘 Move</div>
+        <div class="chips-row">
+          <div class="chip" data-habit="Morning Yoga" data-emoji="🧘" data-cat="move" onclick="toggleChip(this)">Morning Yoga</div>
+          <div class="chip" data-habit="Evening Stretch" data-emoji="🤸" data-cat="move" onclick="toggleChip(this)">Evening Stretch</div>
+          <div class="chip" data-habit="Daily Walk" data-emoji="🚶" data-cat="move" onclick="toggleChip(this)">Daily Walk</div>
+          <div class="chip" data-habit="Dance" data-emoji="💃" data-cat="move" onclick="toggleChip(this)">Dance</div>
+          <div class="chip" data-habit="Strength & Fitness" data-emoji="💪" data-cat="move" onclick="toggleChip(this)">Strength & Fitness</div>
+        </div>
+      </div>
+      <div class="habit-cat">
+        <div class="cat-head">🌬️ Breathe & Rest</div>
+        <div class="chips-row">
+          <div class="chip" data-habit="Box Breathing" data-emoji="🌬️" data-cat="breathe" onclick="toggleChip(this)">Box Breathing</div>
+          <div class="chip" data-habit="Yog Nidra" data-emoji="🌙" data-cat="breathe" onclick="toggleChip(this)">Yog Nidra</div>
+          <div class="chip" data-habit="Better Sleep" data-emoji="😴" data-cat="breathe" onclick="toggleChip(this)">Better Sleep</div>
+          <div class="chip" data-habit="Afternoon Reset" data-emoji="☕" data-cat="breathe" onclick="toggleChip(this)">Afternoon Reset</div>
+        </div>
+      </div>
+      <div class="habit-cat">
+        <div class="cat-head">🥗 Eat Well</div>
+        <div class="chips-row">
+          <div class="chip" data-habit="Sugar-Free Challenge" data-emoji="🍎" data-cat="eat" onclick="toggleChip(this)">Sugar-Free</div>
+          <div class="chip" data-habit="Mindful Eating" data-emoji="🥗" data-cat="eat" onclick="toggleChip(this)">Mindful Eating</div>
+          <div class="chip" data-habit="Hydration Habit" data-emoji="💧" data-cat="eat" onclick="toggleChip(this)">Hydration</div>
+          <div class="chip" data-habit="Nutrition Awareness" data-emoji="🌿" data-cat="eat" onclick="toggleChip(this)">Nutrition</div>
+        </div>
+      </div>
+      <div class="habit-cat">
+        <div class="cat-head">🧠 Mind</div>
+        <div class="chips-row">
+          <div class="chip" data-habit="Stress Relief" data-emoji="🕊️" data-cat="mind" onclick="toggleChip(this)">Stress Relief</div>
+          <div class="chip" data-habit="Daily Meditation" data-emoji="🧘" data-cat="mind" onclick="toggleChip(this)">Meditation</div>
+          <div class="chip" data-habit="Journaling" data-emoji="📓" data-cat="mind" onclick="toggleChip(this)">Journaling</div>
+          <div class="chip" data-habit="Focus & Memory" data-emoji="🎯" data-cat="mind" onclick="toggleChip(this)">Focus & Memory</div>
+        </div>
+      </div>
+      <div class="habit-cat">
+        <div class="cat-head">💪 Body Care</div>
+        <div class="chips-row">
+          <div class="chip" data-habit="Knee & Joint Health" data-emoji="🦵" data-cat="body" onclick="toggleChip(this)">Knee & Joints</div>
+          <div class="chip" data-habit="Back Pain Relief" data-emoji="🔙" data-cat="body" onclick="toggleChip(this)">Back Pain Relief</div>
+          <div class="chip" data-habit="Better Posture" data-emoji="🏋️" data-cat="body" onclick="toggleChip(this)">Better Posture</div>
+          <div class="chip" data-habit="Weight Management" data-emoji="⚖️" data-cat="body" onclick="toggleChip(this)">Weight Management</div>
+        </div>
+      </div>
+      <div class="habit-cat">
+        <div class="cat-head">🤝 Connection</div>
+        <div class="chips-row">
+          <div class="chip" data-habit="Family Wellness" data-emoji="👨‍👩‍👧" data-cat="connect" onclick="toggleChip(this)">Family Wellness</div>
+          <div class="chip" data-habit="Community" data-emoji="🤝" data-cat="connect" onclick="toggleChip(this)">Community</div>
+        </div>
+      </div>
+    </div>
+    <div class="s2-sticky">
+      <button class="btn-primary" id="s2btn" onclick="goTo(3)" disabled>Build My Board &rarr;</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3 -->
+  <div class="screen" id="screen3">
+    <div class="s3-body">
+      <h2>Your board is coming alive</h2>
+      <p>Choose a mood and add a personal intention</p>
+      <div class="cork-board" id="boardPreview">
+        <div class="board-title-row">
+          <div class="board-main-title">My Wellness Vision</div>
+        </div>
+        <div class="polaroid-grid" id="polGrid"></div>
+        <div class="board-intention-strip" id="prevIntention" style="display:none"></div>
+        <div class="board-footer">HABUILD</div>
+      </div>
+      <div class="section-label">Choose your mood</div>
+      <div class="themes-row">
+        <button class="theme-pill on" data-theme="energised" onclick="setTheme(this,'energised')">🌅 Energised</button>
+        <button class="theme-pill" data-theme="grounded" onclick="setTheme(this,'grounded')">🌿 Grounded</button>
+        <button class="theme-pill" data-theme="calm" onclick="setTheme(this,'calm')">🌙 Calm</button>
+        <button class="theme-pill" data-theme="joyful" onclick="setTheme(this,'joyful')">☀️ Joyful</button>
+      </div>
+      <div class="field-label">Your intention <span style="font-weight:400;color:var(--slate-400);font-size:12px">(optional)</span></div>
+      <div class="field-sub">What does being well mean to you this year?</div>
+      <textarea class="txt-area" id="intentionInput" rows="2" maxlength="60"
+        placeholder="e.g. Main apna khayal rakhungi..." oninput="onIntention(this)"></textarea>
+      <div class="char-count"><span id="charCount">0</span>/60</div>
+      <br>
+      <button class="btn-primary" onclick="goTo(4)">Almost there &rarr;</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4 -->
+  <div class="screen" id="screen4">
+    <div class="s4-body">
+      <h2>One last thing</h2>
+      <p>Your answers help us build better habits with you. Takes 30 seconds. 🙏</p>
+      <div class="q-block">
+        <div class="q-head">Which habit matters most to you this year?</div>
+        <div class="q-opts" id="q0"><!-- populated by JS --></div>
+      </div>
+      <div class="q-block">
+        <div class="q-head">How long have you wanted to build <span id="topHabitSpan">your top habit</span>?</div>
+        <div class="q-opts" id="q1">
+          <button class="q-opt" onclick="ansQ1(this,'Just started thinking')">Just started thinking about it</button>
+          <button class="q-opt" onclick="ansQ1(this,'A few months')">A few months now</button>
+          <button class="q-opt" onclick="ansQ1(this,'Over a year')">More than a year</button>
+          <button class="q-opt" onclick="ansQ1(this,'Tried before')">I've tried before but couldn't stick</button>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-head">What usually gets in the way?</div>
+        <div class="q-opts" id="q2">
+          <button class="q-opt" onclick="ansQ2(this,'No time')">No time</button>
+          <button class="q-opt" onclick="ansQ2(this,'I forget')">I forget</button>
+          <button class="q-opt" onclick="ansQ2(this,'No energy')">No energy</button>
+          <button class="q-opt" onclick="ansQ2(this,'Dont know how')">Don't know how to start</button>
+          <button class="q-opt" onclick="ansQ2(this,'No one to do it with')">No one to do it with me</button>
+        </div>
+      </div>
+      <button class="btn-primary" id="s4btn" onclick="goTo(5)" disabled>Save My Board &rarr;</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 5 -->
+  <div class="screen" id="screen5">
+    <div class="s5-body">
+      <h2>Your board is ready! 🎉</h2>
+      <p>Save it and share with someone who needs this reminder.</p>
+      <div class="vision-board-wrap">
+        <div id="visionBoard">
+          <div class="vb-header">
+            <div class="vb-main-title">My <span>Wellness</span><br>Vision Board</div>
+            <div class="vb-sub">Habuild 2026</div>
+          </div>
+          <div class="vb-cards-area" id="vbCards"></div>
+          <div class="vb-intention" id="vbIntention" style="display:none"></div>
+          <div class="vb-footer">
+            <div class="vb-footer-brand">HABUILD</div>
+            <div class="vb-footer-name" id="vbName" style="display:none"></div>
+            <div class="vb-footer-url">habuild.in</div>
+          </div>
+        </div>
+      </div>
+      <div class="login-card" id="loginCard">
+        <h3>Save your board</h3>
+        <p>We'll keep it safe for you.</p>
+        <div class="field-wrap">
+          <label>Your name</label>
+          <input class="txt-input" type="text" id="nameIn" placeholder="Enter your name" />
+        </div>
+        <div class="field-wrap">
+          <label>Mobile number</label>
+          <div class="phone-row">
+            <div class="prefix">+91</div>
+            <input class="txt-input" type="tel" id="phoneIn" maxlength="10"
+              placeholder="10-digit number" oninput="this.value=this.value.replace(/\D/g,'')" />
+          </div>
+        </div>
+        <button class="btn-primary" onclick="handleSave()">Save My Board &rarr;</button>
+      </div>
+      <div class="share-section" id="shareSection">
+        <h3>Share your board</h3>
+        <button class="share-btn btn-wa" onclick="shareWA()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Share on WhatsApp
+        </button>
+        <button class="share-btn btn-dl" onclick="downloadBoard()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download as Image
+        </button>
+        <div class="share-note">You're part of 1.42 crore people building healthy habits every day 🙏</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── ANALYTICS CONFIG ─────────────────────────────────────────────────────
+  // To enable real analytics, deploy this Google Apps Script as a web app:
+  //
+  //   function doPost(e) {
+  //     var d = JSON.parse(e.postData.contents);
+  //     SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
+  //       .appendRow([new Date(), d.event, d.session, JSON.stringify(d.p)]);
+  //     return ContentService.createTextOutput('ok');
+  //   }
+  //
+  // Then paste the deployed URL below:
+  const ANALYTICS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyU0ZCmLi8wH_N85bt4K8MXWTtU9UAg-ai7OyETeXD74LNFzCASeNTHG3MxoSuBzLGd/exec';
+
+  const SESSION_ID = Math.random().toString(36).slice(2, 10);
+  const S = { habits: [], theme: 'energised', intention: '', topHabit: null, q1: null, q2: null };
+
+  const CAT = {
+    move:    { cls: 'cat-move',    pin: 'pin-move'    },
+    breathe: { cls: 'cat-breathe', pin: 'pin-breathe' },
+    eat:     { cls: 'cat-eat',     pin: 'pin-eat'     },
+    mind:    { cls: 'cat-mind',    pin: 'pin-mind'    },
+    body:    { cls: 'cat-body',    pin: 'pin-body'    },
+    connect: { cls: 'cat-connect', pin: 'pin-connect' },
+  };
+
+  function track(event, props) {
+    const payload = { event, session: SESSION_ID, p: { ...props, ts: new Date().toISOString() } };
+    console.log('[Habuild]', event, payload.p);
+    // LocalStorage backup — data persists even if backend isn't set up
+    try {
+      const stored = JSON.parse(localStorage.getItem('hb_events') || '[]');
+      stored.push(payload);
+      localStorage.setItem('hb_events', JSON.stringify(stored.slice(-500)));
+    } catch(e) {}
+    // Send to backend when configured
+    if (ANALYTICS_ENDPOINT) {
+      fetch(ANALYTICS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' }, // avoids CORS preflight
+        body: JSON.stringify(payload),
+        mode: 'no-cors'
+      }).catch(() => {});
+    }
+  }
+
+  function goTo(n) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen' + n).classList.add('active');
+    window.scrollTo(0, 0);
+    const pb = document.getElementById('progressBar');
+    if (n === 1) { pb.style.display = 'none'; }
+    else {
+      pb.style.display = 'block';
+      document.getElementById('progressFill').style.width = ({2:25,3:50,4:75,5:100}[n]) + '%';
+    }
+    if (n === 3) renderPreview();
+    if (n === 4) {
+      // Populate Q0 with the user's selected habits
+      document.getElementById('q0').innerHTML = S.habits.map(h =>
+        `<button class="q-opt" onclick="ansQ0(this,'${h.name.replace(/'/g,"\\'")}','${h.emoji}')">${h.emoji} ${h.name}</button>`
+      ).join('');
+      // Reset all answers on re-entry
+      S.topHabit = null; S.q1 = null; S.q2 = null;
+      document.querySelectorAll('#q1 .q-opt, #q2 .q-opt').forEach(b => b.classList.remove('on'));
+      document.getElementById('topHabitSpan').textContent = 'your top habit';
+      document.getElementById('s4btn').disabled = true;
+    }
+    if (n === 5) renderFinalBoard();
+    track('screen', { n });
+  }
+
+  function toggleChip(el) {
+    const h = { name: el.dataset.habit, emoji: el.dataset.emoji, cat: el.dataset.cat };
+    if (el.classList.contains('on')) {
+      el.classList.remove('on');
+      S.habits = S.habits.filter(x => x.name !== h.name);
+    } else {
+      if (S.habits.length >= 6) return;
+      el.classList.add('on');
+      S.habits.push(h);
+    }
+    const full = S.habits.length >= 6;
+    document.querySelectorAll('.chip').forEach(c => { if (!c.classList.contains('on')) c.classList.toggle('off', full); });
+    for (let i = 0; i < 6; i++) document.getElementById('d'+i).classList.toggle('on', i < S.habits.length);
+    document.getElementById('cLabel').textContent = S.habits.length + ' / 6';
+    document.getElementById('s2btn').disabled = S.habits.length === 0;
+    track('habit', { name: h.name, on: el.classList.contains('on') });
+  }
+
+  function polCard(h, idx, big) {
+    const tape = idx % 3 === 2;
+    const c = CAT[h.cat] || CAT.move;
+    const w  = big ? 'vb-pol'   : 'polaroid';
+    const pp = big ? 'vb-pin'   : 'pol-pin';
+    const ph = big ? 'vb-photo' : 'pol-photo';
+    const lb = big ? 'vb-name'  : 'pol-label';
+    return `<div class="${w}${tape?' tape':''}">
+      ${tape ? '' : `<div class="${pp} ${c.pin}"></div>`}
+      <div class="${ph} ${c.cls}">${h.emoji}</div>
+      <div class="${lb}">${h.name}</div>
+    </div>`;
+  }
+
+  function renderPreview() {
+    document.getElementById('polGrid').innerHTML = S.habits.map((h,i) => polCard(h,i,false)).join('');
+    const pi = document.getElementById('prevIntention');
+    if (S.intention) { pi.style.display='block'; pi.textContent='"'+S.intention+'"'; }
+    else pi.style.display='none';
+  }
+
+  const THEME_COLORS = {
+    energised: { bg: '#C09050', shadow: 'rgba(140,90,10,0.4)' },
+    grounded:  { bg: '#5A8C5A', shadow: 'rgba(30,80,30,0.4)'  },
+    calm:      { bg: '#5A6E9A', shadow: 'rgba(30,50,120,0.4)' },
+    joyful:    { bg: '#C4903A', shadow: 'rgba(160,100,10,0.4)'},
+  };
+
+  function applyThemeToBoard(el, theme) {
+    const t = THEME_COLORS[theme] || THEME_COLORS.energised;
+    el.style.background = t.bg;
+    el.style.boxShadow = `0 6px 24px ${t.shadow}`;
+  }
+
+  function setTheme(btn, theme) {
+    document.querySelectorAll('.theme-pill').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    S.theme = theme;
+    applyThemeToBoard(document.getElementById('boardPreview'), theme);
+    track('theme', { theme });
+  }
+
+  function onIntention(el) {
+    S.intention = el.value;
+    document.getElementById('charCount').textContent = el.value.length;
+    const pi = document.getElementById('prevIntention');
+    if (el.value) { pi.style.display='block'; pi.textContent='"'+el.value+'"'; }
+    else pi.style.display='none';
+  }
+
+  function ansQ0(btn, val, emoji) {
+    document.querySelectorAll('#q0 .q-opt').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    S.topHabit = val;
+    document.getElementById('topHabitSpan').textContent = emoji + ' ' + val;
+    // Reset downstream answers so user re-answers in context of their picked habit
+    S.q1 = null; S.q2 = null;
+    document.querySelectorAll('#q1 .q-opt, #q2 .q-opt').forEach(b => b.classList.remove('on'));
+    document.getElementById('s4btn').disabled = true;
+    track('q0_priority', { val });
+  }
+
+  function ansQ1(btn, val) {
+    document.querySelectorAll('#q1 .q-opt').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on'); S.q1 = val;
+    document.getElementById('s4btn').disabled = !(S.topHabit && S.q1 && S.q2);
+    track('q1', { val, habit: S.topHabit });
+  }
+  function ansQ2(btn, val) {
+    document.querySelectorAll('#q2 .q-opt').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on'); S.q2 = val;
+    document.getElementById('s4btn').disabled = !(S.topHabit && S.q1 && S.q2);
+    track('q2', { val, habit: S.topHabit });
+  }
+
+  function renderFinalBoard() {
+    applyThemeToBoard(document.getElementById('visionBoard'), S.theme);
+    document.getElementById('vbCards').innerHTML = S.habits.map((h,i) => polCard(h,i,true)).join('');
+    const vi = document.getElementById('vbIntention');
+    if (S.intention) { vi.style.display='block'; vi.textContent='"'+S.intention+'"'; }
+    else vi.style.display='none';
+    track('board_rendered', { habits: S.habits.map(h=>h.name), theme: S.theme, topHabit: S.topHabit, q1: S.q1, q2: S.q2 });
+  }
+
+  function handleSave() {
+    const name = document.getElementById('nameIn').value.trim();
+    const phone = document.getElementById('phoneIn').value;
+    if (!name) { alert('Please enter your name'); return; }
+    if (phone.length < 10) { alert('Please enter a valid 10-digit number'); return; }
+
+    // Add name to board
+    const nameEl = document.getElementById('vbName');
+    nameEl.textContent = name + "'s Board";
+    nameEl.style.display = 'block';
+
+    track('saved', { name, phone: phone.slice(-4), habits: S.habits.map(h=>h.name), theme: S.theme, topHabit: S.topHabit, q1: S.q1, q2: S.q2, intention_len: S.intention.length });
+    document.getElementById('loginCard').style.display = 'none';
+    document.getElementById('shareSection').style.display = 'block';
+  }
+
+  function shareWA() {
+    const list = S.habits.map(h => h.emoji + ' ' + h.name).join('\n');
+    const msg = `Yeh dekho mera Wellness Vision Board 🌸\n\nIs saal main build karna chahti hoon:\n${list}${S.intention ? '\n\n"' + S.intention + '"' : ''}\n\nApna bhi banao 👇\nhabuild.in/vision-board\n\n#Habuild #NoZeroDays`;
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    track('share_wa', {});
+  }
+
+  function downloadBoard() {
+    const board = document.getElementById('visionBoard');
+    html2canvas(board, { scale: 2.5, useCORS: true, backgroundColor: null }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'habuild-wellness-vision-board.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+      track('download', {});
+    });
+  }
+</script>
+</body>
+</html>
