@@ -585,19 +585,10 @@
         <div class="cat-head">🧘 Move</div>
         <div class="chips-row">
           <div class="chip" data-habit="Morning Yoga" data-emoji="🧘" data-cat="move" onclick="toggleChip(this)">Morning Yoga</div>
-          <div class="chip" data-habit="Evening Stretch" data-emoji="🤸" data-cat="move" onclick="toggleChip(this)">Evening Stretch</div>
+          <div class="chip" data-habit="Evening Yoga" data-emoji="🤸" data-cat="move" onclick="toggleChip(this)">Evening Yoga</div>
           <div class="chip" data-habit="Daily Walk" data-emoji="🚶" data-cat="move" onclick="toggleChip(this)">Daily Walk</div>
           <div class="chip" data-habit="Dance" data-emoji="💃" data-cat="move" onclick="toggleChip(this)">Dance</div>
           <div class="chip" data-habit="Strength & Fitness" data-emoji="💪" data-cat="move" onclick="toggleChip(this)">Strength & Fitness</div>
-        </div>
-      </div>
-      <div class="habit-cat">
-        <div class="cat-head">🌬️ Breathe & Rest</div>
-        <div class="chips-row">
-          <div class="chip" data-habit="Box Breathing" data-emoji="🌬️" data-cat="breathe" onclick="toggleChip(this)">Box Breathing</div>
-          <div class="chip" data-habit="Yog Nidra" data-emoji="🌙" data-cat="breathe" onclick="toggleChip(this)">Yog Nidra</div>
-          <div class="chip" data-habit="Better Sleep" data-emoji="😴" data-cat="breathe" onclick="toggleChip(this)">Better Sleep</div>
-          <div class="chip" data-habit="Afternoon Reset" data-emoji="☕" data-cat="breathe" onclick="toggleChip(this)">Afternoon Reset</div>
         </div>
       </div>
       <div class="habit-cat">
@@ -605,17 +596,18 @@
         <div class="chips-row">
           <div class="chip" data-habit="Sugar-Free Challenge" data-emoji="🍎" data-cat="eat" onclick="toggleChip(this)">Sugar-Free</div>
           <div class="chip" data-habit="Mindful Eating" data-emoji="🥗" data-cat="eat" onclick="toggleChip(this)">Mindful Eating</div>
-          <div class="chip" data-habit="Hydration Habit" data-emoji="💧" data-cat="eat" onclick="toggleChip(this)">Hydration</div>
+          <div class="chip" data-habit="Drink Enough Water" data-emoji="💧" data-cat="eat" onclick="toggleChip(this)">Drink Enough Water</div>
           <div class="chip" data-habit="Nutrition Awareness" data-emoji="🌿" data-cat="eat" onclick="toggleChip(this)">Nutrition</div>
         </div>
       </div>
       <div class="habit-cat">
-        <div class="cat-head">🧠 Mind</div>
+        <div class="cat-head">🧠 Mind & Breath</div>
         <div class="chips-row">
-          <div class="chip" data-habit="Stress Relief" data-emoji="🕊️" data-cat="mind" onclick="toggleChip(this)">Stress Relief</div>
+          <div class="chip" data-habit="Breathing" data-emoji="🌬️" data-cat="breathe" onclick="toggleChip(this)">Breathing</div>
+          <div class="chip" data-habit="Yog Nidra" data-emoji="🌙" data-cat="breathe" onclick="toggleChip(this)">Yog Nidra</div>
+          <div class="chip" data-habit="Better Sleep" data-emoji="😴" data-cat="breathe" onclick="toggleChip(this)">Better Sleep</div>
           <div class="chip" data-habit="Daily Meditation" data-emoji="🧘" data-cat="mind" onclick="toggleChip(this)">Meditation</div>
           <div class="chip" data-habit="Journaling" data-emoji="📓" data-cat="mind" onclick="toggleChip(this)">Journaling</div>
-          <div class="chip" data-habit="Focus & Memory" data-emoji="🎯" data-cat="mind" onclick="toggleChip(this)">Focus & Memory</div>
         </div>
       </div>
       <div class="habit-cat">
@@ -632,6 +624,10 @@
         <div class="chips-row">
           <div class="chip" data-habit="Family Wellness" data-emoji="👨‍👩‍👧" data-cat="connect" onclick="toggleChip(this)">Family Wellness</div>
           <div class="chip" data-habit="Community" data-emoji="🤝" data-cat="connect" onclick="toggleChip(this)">Community</div>
+          <div class="chip" data-habit="Gratefulness" data-emoji="🙏" data-cat="connect" onclick="toggleChip(this)">Gratefulness</div>
+          <div class="chip" data-habit="Connect with Family" data-emoji="🏠" data-cat="connect" onclick="toggleChip(this)">Connect with Family</div>
+          <div class="chip" data-habit="Connect with Friends" data-emoji="👫" data-cat="connect" onclick="toggleChip(this)">Connect with Friends</div>
+          <div class="chip" data-habit="Active Role in Community" data-emoji="🌍" data-cat="connect" onclick="toggleChip(this)">Active Role in Community</div>
         </div>
       </div>
     </div>
@@ -696,6 +692,8 @@
           <button class="q-opt" onclick="ansQ2(this,'No energy')">No energy</button>
           <button class="q-opt" onclick="ansQ2(this,'Dont know how')">Don't know how to start</button>
           <button class="q-opt" onclick="ansQ2(this,'No one to do it with')">No one to do it with me</button>
+          <button class="q-opt" onclick="ansQ2(this,'Lose interest')">I start but lose interest</button>
+          <button class="q-opt" onclick="ansQ2(this,'Cant pick back up')">I stop one day then never pick it up</button>
         </div>
       </div>
       <button class="btn-primary" id="s4btn" onclick="goTo(5)" disabled>Save My Board &rarr;</button>
@@ -946,10 +944,30 @@
   }
 
   function shareWA() {
-    const list = S.habits.map(h => h.emoji + ' ' + h.name).join('\n');
-    const msg = `Yeh dekho mera Wellness Vision Board 🌸\n\nIs saal main build karna chahti hoon:\n${list}${S.intention ? '\n\n"' + S.intention + '"' : ''}\n\nApna bhi banao 👇\nhabuild.in/vision-board\n\n#Habuild #NoZeroDays`;
+    const board = document.getElementById('visionBoard');
+    const link = 'https://khushibagai-create.github.io/Wellness-Vision-Board-/prototypes/wellness-vision-board.html';
+    const msg = `Yeh dekho mera Wellness Vision Board 🌸\n\nApna bhi banao 👇\n${link}\n\n#Habuild #NoZeroDays`;
+    html2canvas(board, { scale: 2.5, useCORS: true, backgroundColor: null }).then(canvas => {
+      canvas.toBlob(async blob => {
+        const file = new File([blob], 'habuild-vision-board.png', { type: 'image/png' });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file], text: msg });
+            track('share_wa', { method: 'native' });
+          } catch(e) {
+            if (e.name !== 'AbortError') fallbackShareWA(msg);
+          }
+        } else {
+          fallbackShareWA(msg);
+        }
+      }, 'image/png');
+    });
+  }
+
+  function fallbackShareWA(msg) {
+    // Desktop or unsupported browser — open WhatsApp text share
     window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-    track('share_wa', {});
+    track('share_wa', { method: 'text_fallback' });
   }
 
   function downloadBoard() {
