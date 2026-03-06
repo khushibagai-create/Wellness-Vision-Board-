@@ -570,14 +570,14 @@
   <div class="screen" id="screen2">
     <div class="screen-top">
       <h2>Pick your habits</h2>
-      <p>Choose up to 6 habits you want to build</p>
+      <p>Choose 1 to 6 habits you want to build this year</p>
       <div class="counter-row">
         <div class="counter-dots">
           <div class="cdot" id="d0"></div><div class="cdot" id="d1"></div>
           <div class="cdot" id="d2"></div><div class="cdot" id="d3"></div>
           <div class="cdot" id="d4"></div><div class="cdot" id="d5"></div>
         </div>
-        <span class="counter-label" id="cLabel">0 / 6</span>
+        <span class="counter-label" id="cLabel">0 selected</span>
       </div>
     </div>
     <div class="habits-body">
@@ -838,7 +838,7 @@
     const full = S.habits.length >= 6;
     document.querySelectorAll('.chip').forEach(c => { if (!c.classList.contains('on')) c.classList.toggle('off', full); });
     for (let i = 0; i < 6; i++) document.getElementById('d'+i).classList.toggle('on', i < S.habits.length);
-    document.getElementById('cLabel').textContent = S.habits.length + ' / 6';
+    document.getElementById('cLabel').textContent = S.habits.length + ' selected';
     document.getElementById('s2btn').disabled = S.habits.length === 0;
     track('habit', { name: h.name, on: el.classList.contains('on') });
   }
