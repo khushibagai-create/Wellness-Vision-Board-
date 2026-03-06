@@ -6,6 +6,10 @@
   <title>My Wellness Vision Board | Habuild</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Caveat:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    (function(f,b){if(!b.__SV){var e,g,i,h;window.mixpanel=b;b._i=[];b.init=function(e,f,c){function g(a,d){var b=d.split(".");2==b.length&&(a=a[b[0]],d=b[1]);a[d]=function(){a.push([d].concat(Array.prototype.slice.call(arguments,0)))}}var a=b;"undefined"!==typeof c?a=b[c]=[]:c="mixpanel";a.people=a.people||[];a.toString=function(a){var d="mixpanel";"mixpanel"!==c&&(d+="."+c);a||(d+=" (stub)");return d};a.people.toString=function(){return a.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(" ");for(h=0;h<i.length;h++)g(a,i[h]);var j="set set_once union unset remove delete".split(" ");a.get_group=function(){function b(c){d[c]=function(){call2_args=arguments;call2=[c].concat(Array.prototype.slice.call(call2_args,0));a.push([e,call2])}}for(var d={},e=["get_group"].concat(Array.prototype.slice.call(arguments,0)),c=0;c<j.length;c++)b(j[c]);return d};b._i.push([e,f,c])};b.__SV=1.2;e=f.createElement("script");e.type="text/javascript";e.async=!0;e.src="https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";g=f.getElementsByTagName("script")[0];g.parentNode.insertBefore(e,g)}})(document,window.mixpanel||[]);
+    mixpanel.init('81929a7952506e86cd230338890d3298', { persistence: 'localStorage' });
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -774,20 +778,22 @@
   };
 
   function track(event, props) {
-    const payload = { event, session: SESSION_ID, p: { ...props, ts: new Date().toISOString() } };
-    console.log('[Habuild]', event, payload.p);
-    // LocalStorage backup — data persists even if backend isn't set up
+    const payload = { ...props, session: SESSION_ID, ts: new Date().toISOString() };
+    console.log('[Habuild]', event, payload);
+    // Mixpanel
+    try { mixpanel.track(event, payload); } catch(e) {}
+    // LocalStorage backup
     try {
       const stored = JSON.parse(localStorage.getItem('hb_events') || '[]');
-      stored.push(payload);
+      stored.push({ event, p: payload });
       localStorage.setItem('hb_events', JSON.stringify(stored.slice(-500)));
     } catch(e) {}
-    // Send to backend when configured
+    // Google Sheets fallback
     if (ANALYTICS_ENDPOINT) {
       fetch(ANALYTICS_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' }, // avoids CORS preflight
-        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ event, session: SESSION_ID, p: payload }),
         mode: 'no-cors'
       }).catch(() => {});
     }
@@ -931,6 +937,7 @@
     nameEl.textContent = name + "'s Board";
     nameEl.style.display = 'block';
 
+    try { mixpanel.identify('+91' + phone); mixpanel.people.set({ $name: name, $phone: '+91' + phone }); } catch(e) {}
     track('saved', { name, phone: phone.slice(-4), habits: S.habits.map(h=>h.name), theme: S.theme, topHabit: S.topHabit, q1: S.q1, q2: S.q2, intention_len: S.intention.length });
     document.getElementById('loginCard').style.display = 'none';
     document.getElementById('shareSection').style.display = 'block';
