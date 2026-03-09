@@ -565,7 +565,7 @@
           </div>
         </div>
       </div>
-      <button class="btn-primary" onclick="goTo(2)">Build My Board &rarr;</button>
+      <button class="btn-primary" onclick="track('click_action',{screen_name:'Build Wellness Vision Board',type:'Build My Board'});goTo(2)">Build My Board &rarr;</button>
       <div class="s1-social">🌍 <span>Join <strong>1.42 crore members</strong> building healthy habits</span></div>
     </div>
   </div>
@@ -631,7 +631,7 @@
       </div>
     </div>
     <div class="s2-sticky">
-      <button class="btn-primary" id="s2btn" onclick="goTo(3)" disabled>Build My Board &rarr;</button>
+      <button class="btn-primary" id="s2btn" onclick="track('click_action',{screen_name:'Pick Your Habits',type:'Build My Board',value:S.habits.map(h=>h.name)});goTo(3)" disabled>Build My Board &rarr;</button>
     </div>
   </div>
 
@@ -658,10 +658,12 @@
       <div class="field-label">Your intention <span style="font-weight:400;color:var(--slate-400);font-size:12px">(optional)</span></div>
       <div class="field-sub">What does being well mean to you this year?</div>
       <textarea class="txt-area" id="intentionInput" rows="2" maxlength="60"
-        placeholder="e.g. Main apna khayal rakhungi..." oninput="onIntention(this)"></textarea>
+        placeholder="e.g. Main apna khayal rakhungi..."
+        onfocus="track('click_action',{screen_name:'Board Preview',type:'Intention'})"
+        oninput="onIntention(this)"></textarea>
       <div class="char-count"><span id="charCount">0</span>/60</div>
       <br>
-      <button class="btn-primary" onclick="goTo(4)">Almost there &rarr;</button>
+      <button class="btn-primary" onclick="track('click_action',{screen_name:'Board Preview',type:'Submit',value:S.intention});goTo(4)">Almost there &rarr;</button>
     </div>
   </div>
 
@@ -695,7 +697,7 @@
           <button class="q-opt" onclick="ansQ2(this,'Cant pick back up')">I stop one day then never pick it up</button>
         </div>
       </div>
-      <button class="btn-primary" id="s4btn" onclick="goTo(5)" disabled>Save My Board &rarr;</button>
+      <button class="btn-primary" id="s4btn" onclick="track('click_action',{screen_name:'Habit Reflection Page',type:'Submit'});goTo(5)" disabled>Save My Board &rarr;</button>
     </div>
   </div>
 
@@ -723,14 +725,16 @@
         <p>We'll keep it safe for you.</p>
         <div class="field-wrap">
           <label>Your name</label>
-          <input class="txt-input" type="text" id="nameIn" placeholder="Enter your name" />
+          <input class="txt-input" type="text" id="nameIn" placeholder="Enter your name"
+            onfocus="track('click_action',{screen_name:'Details',type:'Name'})" />
         </div>
         <div class="field-wrap">
           <label>Mobile number</label>
           <div class="phone-row">
             <div class="prefix">+91</div>
             <input class="txt-input" type="tel" id="phoneIn" maxlength="10"
-              placeholder="10-digit number" oninput="this.value=this.value.replace(/\D/g,'')" />
+              placeholder="10-digit number" oninput="this.value=this.value.replace(/\D/g,'')"
+              onfocus="track('click_action',{screen_name:'Details',type:'Phone Number'})" />
           </div>
         </div>
         <button class="btn-primary" onclick="handleSave()">Save My Board &rarr;</button>
@@ -766,7 +770,22 @@
   const ANALYTICS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyU0ZCmLi8wH_N85bt4K8MXWTtU9UAg-ai7OyETeXD74LNFzCASeNTHG3MxoSuBzLGd/exec';
 
   const SESSION_ID = Math.random().toString(36).slice(2, 10);
+  const SCREEN_NAMES = {
+    1: 'Build Wellness Vision Board',
+    2: 'Pick Your Habits',
+    3: 'Board Preview',
+    4: 'Habit Reflection Page',
+    5: 'Details'
+  };
   const S = { habits: [], theme: 'energised', intention: '', topHabit: null, q1: null, q2: null };
+
+  // Register super properties — sent with every Mixpanel event automatically
+  try { mixpanel.register({ project: 'wellness_vision_board', session_id: SESSION_ID, user_id: null }); } catch(e) {}
+
+  // Fire on page load
+  window.addEventListener('load', () => {
+    track('landed', { screen_name: 'Build Wellness Vision Board' });
+  });
 
   const CAT = {
     move:    { cls: 'cat-move',    pin: 'pin-move'    },
@@ -822,7 +841,7 @@
       document.getElementById('s4btn').disabled = true;
     }
     if (n === 5) renderFinalBoard();
-    track('screen', { n });
+    if (n > 1) track('landed', { screen_name: SCREEN_NAMES[n] });
   }
 
   function toggleChip(el) {
@@ -839,7 +858,8 @@
     document.querySelectorAll('.chip').forEach(c => { if (!c.classList.contains('on')) c.classList.toggle('off', full); });
     document.getElementById('cLabel').textContent = S.habits.length + ' selected';
     document.getElementById('s2btn').disabled = S.habits.length === 0;
-    track('habit', { name: h.name, on: el.classList.contains('on') });
+    const isOn = el.classList.contains('on');
+    track('click_action', { screen_name: 'Pick Your Habits', type: isOn ? 'habit_selected' : 'habit_deselected', value: h.name });
   }
 
   function polCard(h, idx, big) {
@@ -881,7 +901,7 @@
     btn.classList.add('on');
     S.theme = theme;
     applyThemeToBoard(document.getElementById('boardPreview'), theme);
-    track('theme', { theme });
+    track('click_action', { screen_name: 'Board Preview', type: 'Choose Your Mood', value: theme });
   }
 
   function onIntention(el) {
@@ -901,20 +921,20 @@
     S.q1 = null; S.q2 = null;
     document.querySelectorAll('#q1 .q-opt, #q2 .q-opt').forEach(b => b.classList.remove('on'));
     document.getElementById('s4btn').disabled = true;
-    track('q0_priority', { val });
+    track('click_action', { screen_name: 'Habit Reflection Page', type: 'Matters The Most', value: val });
   }
 
   function ansQ1(btn, val) {
     document.querySelectorAll('#q1 .q-opt').forEach(b => b.classList.remove('on'));
     btn.classList.add('on'); S.q1 = val;
     document.getElementById('s4btn').disabled = !(S.topHabit && S.q1 && S.q2);
-    track('q1', { val, habit: S.topHabit });
+    track('click_action', { screen_name: 'Habit Reflection Page', type: 'Duration', value: val });
   }
   function ansQ2(btn, val) {
     document.querySelectorAll('#q2 .q-opt').forEach(b => b.classList.remove('on'));
     btn.classList.add('on'); S.q2 = val;
     document.getElementById('s4btn').disabled = !(S.topHabit && S.q1 && S.q2);
-    track('q2', { val, habit: S.topHabit });
+    track('click_action', { screen_name: 'Habit Reflection Page', type: 'Blocker', value: val });
   }
 
   function renderFinalBoard() {
@@ -923,7 +943,6 @@
     const vi = document.getElementById('vbIntention');
     if (S.intention) { vi.style.display='block'; vi.textContent='"'+S.intention+'"'; }
     else vi.style.display='none';
-    track('board_rendered', { habits: S.habits.map(h=>h.name), theme: S.theme, topHabit: S.topHabit, q1: S.q1, q2: S.q2 });
   }
 
   function handleSave() {
@@ -937,10 +956,16 @@
     nameEl.textContent = name + "'s Board";
     nameEl.style.display = 'block';
 
-    try { mixpanel.identify('+91' + phone); mixpanel.people.set({ $name: name, $phone: '+91' + phone }); } catch(e) {}
-    track('saved', { name, phone: phone.slice(-4), habits: S.habits.map(h=>h.name), theme: S.theme, topHabit: S.topHabit, q1: S.q1, q2: S.q2, intention_len: S.intention.length });
+    // Identify user and set user_id super property for all subsequent events
+    try {
+      mixpanel.identify('+91' + phone);
+      mixpanel.people.set({ $name: name, $phone: '+91' + phone });
+      mixpanel.register({ user_id: '+91' + phone });
+    } catch(e) {}
+    track('click_action', { screen_name: 'Details', type: 'Submit', name, phone_number: '+91' + phone });
     document.getElementById('loginCard').style.display = 'none';
     document.getElementById('shareSection').style.display = 'block';
+    track('landed', { screen_name: 'Share Your Board' });
   }
 
   function shareWA() {
@@ -953,7 +978,7 @@
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({ files: [file], text: msg });
-            track('share_wa', { method: 'native' });
+            track('click_action', { screen_name: 'Share Your Board', type: 'Share', method: 'native' });
           } catch(e) {
             if (e.name !== 'AbortError') fallbackShareWA(msg);
           }
@@ -967,7 +992,7 @@
   function fallbackShareWA(msg) {
     // Desktop or unsupported browser — open WhatsApp text share
     window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-    track('share_wa', { method: 'text_fallback' });
+    track('click_action', { screen_name: 'Share Your Board', type: 'Share', method: 'text_fallback' });
   }
 
   function downloadBoard() {
@@ -977,7 +1002,7 @@
       a.download = 'habuild-wellness-vision-board.png';
       a.href = canvas.toDataURL('image/png');
       a.click();
-      track('download', {});
+      track('click_action', { screen_name: 'Share Your Board', type: 'Download' });
     });
   }
 </script>
