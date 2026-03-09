@@ -796,11 +796,38 @@
     connect: { cls: 'cat-connect', pin: 'pin-connect' },
   };
 
+  // ── EVENT QUEUE — batches events and flushes to Habuild backend ──────────
+  const EVENT_QUEUE = [];
+  let flushTimer = null;
+
+  function flushEvents() {
+    if (EVENT_QUEUE.length === 0) return;
+    const batch = EVENT_QUEUE.splice(0, EVENT_QUEUE.length);
+    const events = batch.map(e => ({
+      name: `app_${e.event_name}`,
+      payload: e.payload,
+    }));
+    fetch('https://event-service.habuild.in/public/event-service/v1/no-signup/send-events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-GRO-CALLER': 'user-research' },
+      body: JSON.stringify({ events }),
+      signal: AbortSignal.timeout(10000),
+    }).catch(() => {});
+  }
+
+  function queueEvent(event_name, payload) {
+    EVENT_QUEUE.push({ event_name, payload });
+    clearTimeout(flushTimer);
+    flushTimer = setTimeout(flushEvents, 1000); // flush 1s after last event
+  }
+
   function track(event, props) {
-    const payload = { ...props, session: SESSION_ID, ts: new Date().toISOString() };
+    const payload = { ...props, session_id: SESSION_ID, ts: new Date().toISOString() };
     console.log('[Habuild]', event, payload);
     // Mixpanel
     try { mixpanel.track(event, payload); } catch(e) {}
+    // Habuild backend
+    queueEvent(event, payload);
     // LocalStorage backup
     try {
       const stored = JSON.parse(localStorage.getItem('hb_events') || '[]');
@@ -817,6 +844,11 @@
       }).catch(() => {});
     }
   }
+
+  // Flush on page unload so no events are lost
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushEvents();
+  });
 
   function goTo(n) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
