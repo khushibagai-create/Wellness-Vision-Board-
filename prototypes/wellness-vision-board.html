@@ -988,6 +988,31 @@
     nameEl.textContent = name + "'s Board";
     nameEl.style.display = 'block';
 
+    // Send user preference submission to Habuild event service
+    fetch('https://event-service.habuild.in/public/event-service/v1/no-signup/send-events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-GRO-CALLER': 'wellness_vision_board' },
+      body: JSON.stringify({
+        events: [{
+          name: 'user_preference_submission',
+          payload: {
+            sessionId: SESSION_ID,
+            name: name,
+            phoneNumber: phone,
+            flowType: 'wellness_vision_board',
+            source: 'wellness_vision_board',
+            allHabits: S.habits.map(h => h.name),
+            properties: {
+              mattersthemost: S.topHabit,
+              duration: S.q1,
+              blocker: S.q2,
+            }
+          }
+        }]
+      }),
+      signal: AbortSignal.timeout(10000),
+    }).catch(() => {});
+
     // Identify user and set user_id super property for all subsequent events
     try {
       mixpanel.identify('+91' + phone);
