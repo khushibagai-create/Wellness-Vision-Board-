@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Habuild — Walk Together</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --saffron: #F4871A;
+      --saffron-light: #FFF0E0;
+      --saffron-mid: #FFD199;
+      --forest: #2E6B45;
+      --forest-light: #E6F4EB;
+      --forest-mid: #A8D5B7;
+      --cream: #FEFAF4;
+      --warm-white: #FFF8F0;
+      --text-dark: #1A1A1A;
+      --text-mid: #4A4A4A;
+      --text-soft: #8A8A8A;
+      --green-check: #27AE60;
+      --gold: #F0B429;
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
+
+    body {
+      background: linear-gradient(135deg, #2E6B45 0%, #1a4a2e 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Nunito', sans-serif;
+      padding: 20px;
+    }
+
+    /* ── Phone Frame ── */
+    .phone {
+      width: 390px;
+      height: 844px;
+      background: var(--cream);
+      border-radius: 44px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 10px #1a1a1a, 0 0 0 12px #333;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Status bar */
+    .status-bar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-dark);
+      background: var(--cream);
+      flex-shrink: 0;
+    }
+    .status-bar .notch {
+      width: 120px;
+      height: 28px;
+      background: #1a1a1a;
+      border-radius: 0 0 18px 18px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .status-icons { display: flex; gap: 6px; align-items: center; }
+
+    /* Screen system */
+    .screen {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: none;
+      flex-direction: column;
+      background: var(--cream);
+      overflow: hidden;
+    }
+    .screen.active { display: flex; }
+
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* Nav bar */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      height: 52px;
+      flex-shrink: 0;
+      background: var(--cream);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .nav-back {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.05);
+      cursor: pointer;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .nav-title {
+      flex: 1;
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text-dark);
+    }
+    .nav-action {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* ─────────────────────────────────────────────── */
+    /* SCREEN 1 — Create or Join */
+    /* ─────────────────────────────────────────────── */
+    #screen1 .hero-banner {
+      background: linear-gradient(160deg, #2E6B45 0%, #1a4a2e 100%);
+      padding: 28px 24px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    #screen1 .hero-banner::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(244,135,26,0.15);
+      border-radius: 50%;
+      top: -60px;
+      right: -40px;
+    }
+    #screen1 .hero-banner::after {
+      content: '';
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+      bottom: -30px;
+      left: 20px;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(244,135,26,0.25);
+      color: var(--saffron-mid);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .s1-body { padding: 20px; }
+
+    .option-card {
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      border: 2px solid transparent;
+    }
+    .option-card:active { transform: scale(0.98); }
+    .option-card.create {
+      background: linear-gradient(135deg, #FFF0E0 0%, #FFE4C2 100%);
+      border-color: var(--saffron-mid);
+    }
+    .option-card.join {
+      background: var(--forest-light);
+      border-color: var(--forest-mid);
+    }
+    .option-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .option-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+    .option-desc {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.4;
+    }
+    .option-arrow {
+      float: right;
+      font-size: 20px;
+      color: var(--text-soft);
+    }
+
+    .divider-label {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-soft);
+      font-weight: 600;
+      margin: 6px 0 16px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Invite card */
+    .invite-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 2px solid var(--saffron-mid);
+      margin-bottom: 16px;
+    }
+    .invite-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .invite-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #F4871A, #e06b00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .invite-text .from {
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-bottom: 2px;
+    }
+    .invite-text .group-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--text-dark);
+    }
+    .invite-stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .invite-stat {
+      font-size: 12px;
+      color: var(--text-mid);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .invite-stat strong { color: var(--text-dark); font-weight: 700; }
+    .btn-join-invite {
+      width: 100%;
+      background: linear-gradient(135deg, #F4871A, #d96a00);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .btn-join-invite:active { transform: scale(0.97); }
+
+    .size-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-soft);
+      padding: 0 0 24px;
+    }
+    .size-note span { color: var(--forest); font-weight: 700; }
+
+    /* ─────────────────────────────────────────────── */
+    /* SCREEN 2 — Group Home */
+    /* ─────────────────────────────────────────────── */
+    #screen2 .group-header {
+      background: linear-gradient(160deg, #2E6B45, #1a4a2e);
+      padding: 16px 20px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #screen2 .group-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 24px;
+      background: var(--cream);
+      border-radius: 24px 24px 0 0;
+    }
+    .group-header-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .group-header-streak {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 12px;
+    }
+    .streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(244,135,26,0.25);
+      border: 1px solid rgba(244,135,26,0.4);
+      color: #FFD199;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      padding: 8px 20px;
+      border-radius: 30px;
+    }
+    .streak-badge .flame { font-size: 24px; }
+
+    /* HERO: 5/6 counter */
+    .checkin-hero {
+      margin: 0 20px;
+      margin-top: -4px;
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 24px 20px 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      margin-bottom: 16px;
+    }
+    .checkin-label {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    /* Avatar ring layout */
+    .avatar-ring {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 20px;
+    }
+    .avatar-ring-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    .ring-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .ring-count {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 42px;
+      color: var(--forest);
+      line-height: 1;
+    }
+    .ring-count span { color: var(--text-soft); font-weight: 400; font-size: 28px; }
+    .ring-label {
+      font-size: 12px;
+      color: var(--text-soft);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* Avatars around the ring */
+    .member-avatar {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      border: 3px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transform: translate(-50%, -50%);
+      transition: all 0.3s ease;
+    }
+    .member-avatar.done {
+      background: linear-gradient(135deg, #27AE60, #1a8a48);
+      color: #fff;
+    }
+    .member-avatar.done::after {
+      content: '✓';
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      background: var(--green-check);
+      border-radius: 50%;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #fff;
+      color: white;
+    }
+    .member-avatar.pending {
+      background: #E8E8E8;
+      color: var(--text-soft);
+    }
+
+    .checkin-summary {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .checkin-summary strong { color: var(--forest); }
+
+    .btn-checkin {
+      width: 100%;
+      background: linear-gradient(135deg, #F4871A, #d96a00);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 16px rgba(244,135,26,0.4);
+    }
+    .btn-checkin:active { transform: scale(0.97); }
+    .btn-checkin.done-state {
+      background: linear-gradient(135deg, #27AE60, #1a8a48);
+      box-shadow: 0 4px 16px rgba(39,174,96,0.4);
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin: 0 20px 16px;
+    }
+    .stat-card {
+      flex: 1;
+      background: #fff;
+      border-radius: var(--radius-sm);
+      padding: 14px 12px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .stat-num {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--text-dark);
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    /* This week bar */
+    .week-card {
+      margin: 0 20px 16px;
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .week-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-dark);
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .week-days {
+      display: flex;
+      gap: 6px;
+    }
+    .week-day {
+      flex: 1;
+      text-align: center;
+    }
+    .day-label {
+      font-size: 10px;
+      color: var(--text-soft);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .day-bar-wrap {
+      height: 40px;
+      background: var(--forest-light);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .day-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, var(--forest), #4a9d69);
+      border-radius: 6px;
+      transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .day-perfect {
+      background: linear-gradient(to top, var(--saffron), #ffaa44);
+    }
+    .day-count {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-mid);
+      margin-top: 4px;
+    }
+
+    /* Rank card */
+    .rank-card {
+      margin: 0 20px 20px;
+      background: linear-gradient(135deg, #1a4a2e, #2E6B45);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .rank-trophy { font-size: 28px; }
+    .rank-text { flex: 1; }
+    .rank-main {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #fff;
+    }
+    .rank-sub { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+    .rank-chevron { font-size: 18px; color: rgba(255,255,255,0.5); }
+
+    /* ─────────────────────────────────────────────── */
+    /* SCREEN 3 — Check-in Flow */
+    /* ─────────────────────────────────────────────── */
+    #screen3 {
+      background: var(--cream);
+    }
+    .checkin-flow-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .checkin-celebration {
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 24px;
+      background: var(--forest-light);
+      border-radius: var(--radius);
+      width: 100%;
+    }
+    .celebration-icon {
+      font-size: 52px;
+      display: block;
+      margin-bottom: 10px;
+      animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .celebration-text {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--forest);
+      margin-bottom: 6px;
+    }
+    .celebration-sub {
+      font-size: 13px;
+      color: var(--text-mid);
+    }
+    .six-six-celebration {
+      background: linear-gradient(135deg, #FFF0E0, #FFE4C2);
+      border: 2px solid var(--saffron-mid);
+      animation: pulseCard 1s ease-in-out 3;
+    }
+    @keyframes pulseCard {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    .question-section {
+      width: 100%;
+      margin-bottom: 24px;
+    }
+    .question-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      padding: 10px 16px;
+      border-radius: 30px;
+      border: 2px solid rgba(0,0,0,0.1);
+      background: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chip:hover, .chip.selected {
+      border-color: var(--forest);
+      background: var(--forest-light);
+      color: var(--forest);
+    }
+    .chip.mood-chip.selected {
+      border-color: var(--saffron);
+      background: var(--saffron-light);
+      color: var(--saffron);
+    }
+
+    .feed-preview {
+      width: 100%;
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
+    }
+    .feed-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .feed-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .feed-item:last-child { border-bottom: none; }
+    .feed-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--forest-mid);
+      flex-shrink: 0;
+    }
+    .feed-dot.new { background: var(--green-check); animation: blink 1s infinite; }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .feed-text { font-size: 13px; color: var(--text-mid); line-height: 1.4; }
+    .feed-time { font-size: 11px; color: var(--text-soft); margin-left: auto; flex-shrink: 0; }
+
+    .btn-done-flow {
+      width: 100%;
+      background: linear-gradient(135deg, #2E6B45, #1a4a2e);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(46,107,69,0.3);
+    }
+
+    /* Confetti */
+    .confetti-container {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      animation: confettiFall 2.5s ease-in forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(900px) rotate(720deg); opacity: 0; }
+    }
+
+    /* ─────────────────────────────────────────────── */
+    /* SCREEN 4 — Group League */
+    /* ─────────────────────────────────────────────── */
+    #screen4 .league-header {
+      background: linear-gradient(160deg, #1a1a1a, #2d2d2d);
+      padding: 20px 20px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #screen4 .league-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 24px;
+      background: var(--cream);
+      border-radius: 24px 24px 0 0;
+    }
+    #screen4 .league-header::before {
+      content: '🏆';
+      font-size: 80px;
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      opacity: 0.15;
+    }
+    .league-tag {
+      display: inline-block;
+      background: rgba(240,180,41,0.2);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .league-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .league-subtitle { font-size: 13px; color: rgba(255,255,255,0.6); }
+
+    .league-body { padding: 4px 20px 20px; }
+
+    .league-scope {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .scope-chip {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(0,0,0,0.05);
+      color: var(--text-soft);
+      cursor: pointer;
+    }
+    .scope-chip.active {
+      background: var(--forest-light);
+      color: var(--forest);
+    }
+
+    .podium-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .podium-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+    .podium-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: 6px;
+      border: 3px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .podium-block {
+      width: 100%;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+    }
+    .podium-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-mid);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    .leaderboard-list {
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+    }
+    .lb-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: background 0.15s;
+    }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-row.your-group {
+      background: linear-gradient(90deg, var(--forest-light), #fff);
+      border-left: 4px solid var(--forest);
+    }
+    .lb-rank {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      width: 32px;
+      color: var(--text-soft);
+    }
+    .lb-rank.gold { color: #F0B429; }
+    .lb-rank.silver { color: #A0A0A0; }
+    .lb-rank.bronze { color: #CD7F32; }
+    .lb-emoji { font-size: 22px; margin-right: 10px; }
+    .lb-info { flex: 1; }
+    .lb-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-dark);
+    }
+    .lb-meta { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+    .lb-score {
+      text-align: right;
+    }
+    .lb-walks {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--text-dark);
+    }
+    .lb-rate {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-top: 1px;
+    }
+
+    .motivation-card {
+      background: linear-gradient(135deg, var(--saffron-light), #FFF0E0);
+      border: 1.5px solid var(--saffron-mid);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .motivation-text {
+      font-size: 14px;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+    .motivation-text strong { color: var(--saffron); }
+
+    .design-principle {
+      background: #fff;
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .principle-icon { font-size: 20px; flex-shrink: 0; }
+    .principle-text { font-size: 12px; color: var(--text-soft); line-height: 1.5; }
+
+    /* ─────────────────────────────────────────────── */
+    /* SCREEN 5 — Milestone */
+    /* ─────────────────────────────────────────────── */
+    #screen5 {
+      background: linear-gradient(160deg, #1a4a2e 0%, #2E6B45 40%, var(--cream) 40%);
+    }
+    .milestone-top {
+      padding: 28px 20px 40px;
+      text-align: center;
+    }
+    .milestone-badge-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .milestone-badge {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--saffron), #d96a00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      border: 5px solid rgba(255,255,255,0.3);
+      box-shadow: 0 8px 32px rgba(244,135,26,0.4);
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 8px 32px rgba(244,135,26,0.4); }
+      50% { box-shadow: 0 8px 48px rgba(244,135,26,0.7); }
+    }
+    .milestone-ring {
+      position: absolute;
+      top: -8px; left: -8px; right: -8px; bottom: -8px;
+      border-radius: 50%;
+      border: 3px dashed rgba(255,255,255,0.3);
+      animation: spin 12s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .milestone-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 26px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .milestone-subtitle { font-size: 14px; color: rgba(255,255,255,0.75); }
+
+    .milestone-body {
+      padding: 0 20px 24px;
+    }
+
+    .milestone-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .ms-stat {
+      background: #fff;
+      border-radius: var(--radius-sm);
+      padding: 16px 12px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .ms-stat-emoji { font-size: 22px; margin-bottom: 6px; }
+    .ms-stat-num {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--text-dark);
+    }
+    .ms-stat-label { font-size: 11px; color: var(--text-soft); font-weight: 600; margin-top: 2px; }
+
+    /* Shareable card */
+    .share-card {
+      background: linear-gradient(135deg, #1a4a2e, #2E6B45);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .share-card::before {
+      content: '🌿';
+      font-size: 60px;
+      position: absolute;
+      top: -10px;
+      right: -5px;
+      opacity: 0.15;
+    }
+    .share-group-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .share-headline {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .share-habuild-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 600;
+    }
+
+    .personal-contrib {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+    }
+    .contrib-header {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .contrib-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .contrib-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--saffron), #d96a00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .contrib-info { flex: 1; }
+    .contrib-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-dark);
+    }
+    .contrib-days { font-size: 13px; color: var(--text-mid); }
+    .contrib-pct {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--forest);
+    }
+
+    .member-contributions {
+      margin-top: 14px;
+    }
+    .member-contrib-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .mc-name { font-size: 13px; font-weight: 600; color: var(--text-mid); width: 52px; flex-shrink: 0; }
+    .mc-bar-wrap {
+      flex: 1;
+      height: 8px;
+      background: #F0F0F0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .mc-bar {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--forest), #4a9d69);
+      transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .mc-pct { font-size: 12px; font-weight: 700; color: var(--text-mid); width: 36px; text-align: right; }
+
+    .share-btn-row {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-share-group {
+      flex: 1;
+      background: linear-gradient(135deg, #F4871A, #d96a00);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-share-personal {
+      flex: 1;
+      background: var(--forest-light);
+      color: var(--forest);
+      border: 2px solid var(--forest-mid);
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      height: 72px;
+      background: #fff;
+      border-top: 1px solid rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      flex-shrink: 0;
+      padding-bottom: 8px;
+    }
+    .bnav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 10px;
+      transition: background 0.15s;
+    }
+    .bnav-item.active { background: var(--forest-light); }
+    .bnav-icon { font-size: 22px; }
+    .bnav-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-soft);
+    }
+    .bnav-item.active .bnav-label { color: var(--forest); }
+
+    /* Transition animation */
+    .screen { transition: opacity 0.2s ease; }
+
+    /* Toast */
+    .toast {
+      position: absolute;
+      bottom: 90px;
+      left: 20px;
+      right: 20px;
+      background: #1a1a1a;
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      z-index: 200;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Pill button */
+    .pill-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: 2px solid var(--forest);
+      color: var(--forest);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      background: transparent;
+      transition: all 0.15s;
+    }
+    .pill-btn:active {
+      background: var(--forest);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+  <div class="confetti-container" id="confettiContainer"></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 1 — Create or Join -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="screen active" id="screen1">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="notch"></div>
+      <div class="status-icons">
+        <span>●●●</span>
+        <span>WiFi</span>
+        <span>🔋</span>
+      </div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="hero-banner">
+        <div class="hero-tag">NEW — WALK TOGETHER</div>
+        <div class="hero-title">Walking is better<br>with your people 🌿</div>
+        <div class="hero-sub">Create a group, walk together, keep each other going — every single day.</div>
+      </div>
+
+      <div class="s1-body">
+
+        <!-- Invite card -->
+        <div class="invite-card">
+          <div class="invite-header">
+            <div class="invite-avatar">🏃</div>
+            <div class="invite-text">
+              <div class="from">Suresh invited you to</div>
+              <div class="group-name">"Nagpur Walkers" 🌿</div>
+            </div>
+          </div>
+          <div class="invite-stats">
+            <div class="invite-stat">👥 <strong>5 members</strong></div>
+            <div class="invite-stat">🔥 <strong>8-day</strong> streak</div>
+            <div class="invite-stat">📍 Nagpur</div>
+          </div>
+          <button class="btn-join-invite" onclick="goToScreen(2)">Join Group →</button>
+        </div>
+
+        <div class="divider-label">— or start your own —</div>
+
+        <div class="option-card create" onclick="showToast('Group creation coming soon! 🌿'); ">
+          <span class="option-arrow">→</span>
+          <div class="option-icon">✨</div>
+          <div class="option-title">Create a group</div>
+          <div class="option-desc">Name your group, invite friends & family — and start your shared streak today.</div>
+        </div>
+
+        <div class="option-card join" onclick="showToast('Enter invite code coming soon! 🔑')">
+          <span class="option-arrow">→</span>
+          <div class="option-icon">🔗</div>
+          <div class="option-title">Join with a code</div>
+          <div class="option-desc">Have an invite code? Enter it here to join your group's walking journey.</div>
+        </div>
+
+        <div class="size-note">Groups of <span>3 to 8 people</span> work best for accountability</div>
+
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="bnav-item" onclick="showToast('Home')"><span class="bnav-icon">🏠</span><span class="bnav-label">Home</span></div>
+      <div class="bnav-item active"><span class="bnav-icon">🚶</span><span class="bnav-label">Walk</span></div>
+      <div class="bnav-item" onclick="showToast('Sessions')"><span class="bnav-icon">🧘</span><span class="bnav-label">Sessions</span></div>
+      <div class="bnav-item" onclick="showToast('Profile')"><span class="bnav-icon">👤</span><span class="bnav-label">Profile</span></div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 2 — Group Home -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="screen" id="screen2">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="notch"></div>
+      <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-back" onclick="goToScreen(1)">←</div>
+      <div class="nav-title">My Group</div>
+      <div class="nav-action" onclick="showToast('Group settings 🔧')">⚙️</div>
+    </div>
+
+    <div class="scroll-area">
+      <!-- Header with streak -->
+      <div class="group-header">
+        <div class="group-header-name">Nagpur Walkers 🌿</div>
+        <div class="group-header-streak">Walking together since Jan 2026</div>
+        <div class="streak-badge">
+          <span class="flame">🔥</span>
+          12 days together
+        </div>
+      </div>
+
+      <!-- HERO: Check-in ring -->
+      <div class="checkin-hero">
+        <div class="checkin-label">Today's Walk Status</div>
+
+        <div class="avatar-ring" id="avatarRing">
+          <svg class="avatar-ring-svg" viewBox="0 0 220 220" fill="none">
+            <!-- Background ring -->
+            <circle cx="110" cy="110" r="90" stroke="#F0F0F0" stroke-width="10"/>
+            <!-- Progress arc: 5/6 = 300deg -->
+            <circle
+              cx="110" cy="110" r="90"
+              stroke="url(#ringGrad)"
+              stroke-width="10"
+              stroke-linecap="round"
+              stroke-dasharray="565.48"
+              stroke-dashoffset="94.2"
+              transform="rotate(-90 110 110)"
+              id="progressArc"
+              style="transition: stroke-dashoffset 1s cubic-bezier(0.34,1.56,0.64,1);"
+            />
+            <defs>
+              <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#27AE60"/>
+                <stop offset="100%" stop-color="#4a9d69"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-count" id="ringCount">5<span>/6</span></div>
+            <div class="ring-label">walked today</div>
+          </div>
+
+          <!-- Member avatars placed around the ring -->
+          <!-- Positions: 6 members evenly at 60deg intervals, starting top -->
+          <div class="member-avatar done" style="top:17%; left:50%;" title="Priya">P</div>
+          <div class="member-avatar done" style="top:38%; left:88%;" title="Ravi">R</div>
+          <div class="member-avatar done" style="top:73%; left:82%;" title="Sunita">S</div>
+          <div class="member-avatar done" style="top:84%; left:50%;" title="Meena">M</div>
+          <div class="member-avatar done" style="top:73%; left:18%;" title="Vikram">V</div>
+          <div class="member-avatar pending" style="top:38%; left:12%;" id="pendingAvatar">?</div>
+        </div>
+
+        <div class="checkin-summary">
+          <strong>5 of 6 members</strong> walked today 🌿<br>
+          One more walk and the group hits 6/6!
+        </div>
+
+        <button class="btn-checkin" id="checkinBtn" onclick="handleCheckin()">
+          🚶 I walked today
+        </button>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num">47</div>
+          <div class="stat-label">walks this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">6/6</div>
+          <div class="stat-label">best day (Tue)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">12</div>
+          <div class="stat-label">day streak 🔥</div>
+        </div>
+      </div>
+
+      <!-- Week bar chart -->
+      <div class="week-card">
+        <div class="week-title">
+          <span>This Week</span>
+          <span style="font-size:12px;color:var(--text-soft);font-weight:600;">Mar 4–10</span>
+        </div>
+        <div class="week-days">
+          <div class="week-day">
+            <div class="day-label">Mon</div>
+            <div class="day-bar-wrap"><div class="day-bar" style="height:60%"></div></div>
+            <div class="day-count">4/6</div>
+          </div>
+          <div class="week-day">
+            <div class="day-label">Tue</div>
+            <div class="day-bar-wrap"><div class="day-bar day-perfect" style="height:100%"></div></div>
+            <div class="day-count">6/6 🌟</div>
+          </div>
+          <div class="week-day">
+            <div class="day-label">Wed</div>
+            <div class="day-bar-wrap"><div class="day-bar" style="height:83%"></div></div>
+            <div class="day-count">5/6</div>
+          </div>
+          <div class="week-day">
+            <div class="day-label">Thu</div>
+            <div class="day-bar-wrap"><div class="day-bar day-perfect" style="height:100%"></div></div>
+            <div class="day-count">6/6 🌟</div>
+          </div>
+          <div class="week-day">
+            <div class="day-label">Fri</div>
+            <div class="day-bar-wrap"><div class="day-bar" style="height:67%"></div></div>
+            <div class="day-count">4/6</div>
+          </div>
+          <div class="week-day">
+            <div class="day-label">Sat</div>
+            <div class="day-bar-wrap"><div class="day-bar" style="height:83%"></div></div>
+            <div class="day-count">5/6</div>
+          </div>
+          <div class="week-day">
+            <div class="day-label">Sun</div>
+            <div class="day-bar-wrap"><div class="day-bar" style="height:83%"></div></div>
+            <div class="day-count">5/6</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- League rank card -->
+      <div class="rank-card" onclick="goToScreen(4)">
+        <div class="rank-trophy">🏆</div>
+        <div class="rank-text">
+          <div class="rank-main">Ranked #3 in Maharashtra this week</div>
+          <div class="rank-sub">3 more walks to reach #2 — tap to see league →</div>
+        </div>
+        <div class="rank-chevron">›</div>
+      </div>
+
+      <div style="height: 16px;"></div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="bnav-item" onclick="showToast('Home')"><span class="bnav-icon">🏠</span><span class="bnav-label">Home</span></div>
+      <div class="bnav-item active"><span class="bnav-icon">🚶</span><span class="bnav-label">Walk</span></div>
+      <div class="bnav-item" onclick="showToast('Sessions')"><span class="bnav-icon">🧘</span><span class="bnav-label">Sessions</span></div>
+      <div class="bnav-item" onclick="showToast('Profile')"><span class="bnav-icon">👤</span><span class="bnav-label">Profile</span></div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 3 — Check-in Flow -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="screen" id="screen3">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="notch"></div>
+      <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-back" onclick="goToScreen(2)">←</div>
+      <div class="nav-title">Today's Walk</div>
+      <div class="nav-action"></div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="checkin-flow-body">
+
+        <!-- Celebration card -->
+        <div class="checkin-celebration six-six-celebration" id="celebCard">
+          <span class="celebration-icon">🎉</span>
+          <div class="celebration-text">Group is 6/6 today!</div>
+          <div class="celebration-sub">You completed the group — Nagpur Walkers walks together today 🌿</div>
+        </div>
+
+        <!-- Mood question -->
+        <div class="question-section">
+          <div class="question-title">How was your walk?</div>
+          <div class="chip-row" id="moodChips">
+            <div class="chip mood-chip" onclick="selectChip(this, 'mood')">😌 Great</div>
+            <div class="chip mood-chip" onclick="selectChip(this, 'mood')">😐 Okay</div>
+            <div class="chip mood-chip" onclick="selectChip(this, 'mood')">🤷 Short but done</div>
+          </div>
+        </div>
+
+        <!-- Nature chips -->
+        <div class="question-section">
+          <div class="question-title">What did you notice?</div>
+          <div class="chip-row" id="natureChips">
+            <div class="chip" onclick="selectChip(this, 'nature')">🌳 Trees</div>
+            <div class="chip" onclick="selectChip(this, 'nature')">🐦 Birds</div>
+            <div class="chip" onclick="selectChip(this, 'nature')">☁️ Sky</div>
+            <div class="chip" onclick="selectChip(this, 'nature')">🤫 Silence</div>
+            <div class="chip" onclick="selectChip(this, 'nature')">🌸 Flowers</div>
+            <div class="chip" onclick="selectChip(this, 'nature')">💨 Breeze</div>
+          </div>
+        </div>
+
+        <!-- Live feed -->
+        <div class="feed-preview">
+          <div class="feed-title">Group feed — live</div>
+          <div class="feed-item">
+            <div class="feed-dot new"></div>
+            <div class="feed-text"><strong>You</strong> walked — group is 6/6! 🌿</div>
+            <div class="feed-time">now</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot"></div>
+            <div class="feed-text"><strong>Vikram</strong> walked this morning 🚶</div>
+            <div class="feed-time">6:47 AM</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot"></div>
+            <div class="feed-text"><strong>Meena</strong> walked — great start! ☀️</div>
+            <div class="feed-time">6:31 AM</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot"></div>
+            <div class="feed-text"><strong>Sunita</strong> logged her walk 🌸</div>
+            <div class="feed-time">6:22 AM</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot"></div>
+            <div class="feed-text"><strong>Priya</strong> walked — group on 4/6 🌿</div>
+            <div class="feed-time">6:08 AM</div>
+          </div>
+        </div>
+
+        <button class="btn-done-flow" onclick="goToScreen(2)">
+          Back to Group Home →
+        </button>
+
+        <div style="height: 8px;"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 4 — Group League -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="screen" id="screen4">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="notch"></div>
+      <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-back" onclick="goToScreen(2)">←</div>
+      <div class="nav-title">Walking League</div>
+      <div class="nav-action">📊</div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="league-header">
+        <div class="league-tag">MAHARASHTRA LEAGUE</div>
+        <div class="league-title">This Week's Rankings 🏆</div>
+        <div class="league-subtitle">Mar 4 – Mar 10 · 48 groups competing</div>
+      </div>
+
+      <div class="league-body">
+
+        <div class="league-scope">
+          <div class="scope-chip active">Maharashtra</div>
+          <div class="scope-chip" onclick="showToast('All India view coming soon!')">All India</div>
+          <div class="scope-chip" onclick="showToast('City view coming soon!')">Nagpur</div>
+        </div>
+
+        <!-- Podium visual -->
+        <div class="podium-row">
+          <!-- 2nd place -->
+          <div class="podium-col">
+            <div class="podium-avatar" style="background: linear-gradient(135deg, #A0A0A0, #808080); color:#fff; font-size:16px;">🌇</div>
+            <div class="podium-block" style="height: 64px; background: linear-gradient(135deg, #A0A0A0, #888);">🥈</div>
+            <div class="podium-name">Delhi<br>Walkers</div>
+          </div>
+          <!-- 1st place -->
+          <div class="podium-col">
+            <div class="podium-avatar" style="background: linear-gradient(135deg, #F0B429, #d4941a); color:#fff; font-size:16px;">🌅</div>
+            <div class="podium-block" style="height: 88px; background: linear-gradient(135deg, #F0B429, #d4941a);">🥇</div>
+            <div class="podium-name">Mumbai<br>Sunrise</div>
+          </div>
+          <!-- 3rd place — YOUR GROUP -->
+          <div class="podium-col">
+            <div class="podium-avatar" style="background: linear-gradient(135deg, #2E6B45, #1a4a2e); color:#fff; font-size:16px;">🌿</div>
+            <div class="podium-block" style="height: 50px; background: linear-gradient(135deg, #2E6B45, #1a4a2e);">🥉</div>
+            <div class="podium-name" style="color:var(--forest);font-weight:800;">Nagpur<br>Walkers ←</div>
+          </div>
+        </div>
+
+        <!-- Leaderboard list -->
+        <div class="leaderboard-list">
+          <div class="lb-row">
+            <div class="lb-rank gold">1</div>
+            <div class="lb-emoji">🌅</div>
+            <div class="lb-info">
+              <div class="lb-name">Mumbai Sunrise</div>
+              <div class="lb-meta">6 members · 12-day group streak</div>
+            </div>
+            <div class="lb-score">
+              <div class="lb-walks">41</div>
+              <div class="lb-rate">98% rate</div>
+            </div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-rank silver">2</div>
+            <div class="lb-emoji">🏙️</div>
+            <div class="lb-info">
+              <div class="lb-name">Delhi Walkers</div>
+              <div class="lb-meta">6 members · 9-day group streak</div>
+            </div>
+            <div class="lb-score">
+              <div class="lb-walks">38</div>
+              <div class="lb-rate">91% rate</div>
+            </div>
+          </div>
+          <div class="lb-row your-group">
+            <div class="lb-rank bronze">3</div>
+            <div class="lb-emoji">🌿</div>
+            <div class="lb-info">
+              <div class="lb-name">Nagpur Walkers <span style="font-size:11px;color:var(--forest);font-weight:700;">YOU</span></div>
+              <div class="lb-meta">6 members · 12-day group streak</div>
+            </div>
+            <div class="lb-score">
+              <div class="lb-walks">35</div>
+              <div class="lb-rate">83% rate</div>
+            </div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-rank">4</div>
+            <div class="lb-emoji">☀️</div>
+            <div class="lb-info">
+              <div class="lb-name">Pune Early Birds</div>
+              <div class="lb-meta">5 members · 7-day group streak</div>
+            </div>
+            <div class="lb-score">
+              <div class="lb-walks">32</div>
+              <div class="lb-rate">76% rate</div>
+            </div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-rank">5</div>
+            <div class="lb-emoji">🌻</div>
+            <div class="lb-info">
+              <div class="lb-name">Nashik Morning Crew</div>
+              <div class="lb-meta">4 members · 5-day group streak</div>
+            </div>
+            <div class="lb-score">
+              <div class="lb-walks">28</div>
+              <div class="lb-rate">83% rate</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Motivation card -->
+        <div class="motivation-card">
+          <div class="motivation-text">
+            Your group needs <strong>3 more walks</strong> to reach #2 this week — and 2 members haven't checked in yet today. Together, you can move up! 💪
+          </div>
+        </div>
+
+        <!-- Design principle note -->
+        <div class="design-principle">
+          <div class="principle-icon">🤝</div>
+          <div class="principle-text">
+            <strong>Groups compete, individuals don't.</strong> Nagpur Walkers is ranked as a team — no individual is ever shown as "dragging the group down." Accountability stays gentle and collective.
+          </div>
+        </div>
+
+        <div style="height: 16px;"></div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="bnav-item" onclick="showToast('Home')"><span class="bnav-icon">🏠</span><span class="bnav-label">Home</span></div>
+      <div class="bnav-item active"><span class="bnav-icon">🚶</span><span class="bnav-label">Walk</span></div>
+      <div class="bnav-item" onclick="showToast('Sessions')"><span class="bnav-icon">🧘</span><span class="bnav-label">Sessions</span></div>
+      <div class="bnav-item" onclick="showToast('Profile')"><span class="bnav-icon">👤</span><span class="bnav-label">Profile</span></div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 5 — Milestone -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="screen" id="screen5">
+    <div class="status-bar" style="background: #1a4a2e; color:#fff;">
+      <span>9:41</span>
+      <div class="notch"></div>
+      <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+    </div>
+
+    <div class="nav-bar" style="background:#1a4a2e; border:none;">
+      <div class="nav-back" style="background:rgba(255,255,255,0.15); color:#fff;" onclick="goToScreen(2)">←</div>
+      <div class="nav-title" style="color:#fff;">21-Day Milestone 🌿</div>
+      <div class="nav-action" style="color:rgba(255,255,255,0.6);">🎊</div>
+    </div>
+
+    <div class="scroll-area">
+      <!-- Milestone top -->
+      <div class="milestone-top">
+        <div class="milestone-badge-wrap">
+          <div class="milestone-badge">🌿</div>
+          <div class="milestone-ring"></div>
+        </div>
+        <div class="milestone-title">Nagpur Walkers</div>
+        <div class="milestone-subtitle">21 days walked together 🎉</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="milestone-body">
+        <div class="milestone-stats-grid">
+          <div class="ms-stat">
+            <div class="ms-stat-emoji">🚶</div>
+            <div class="ms-stat-num">118</div>
+            <div class="ms-stat-label">total group walks</div>
+          </div>
+          <div class="ms-stat">
+            <div class="ms-stat-emoji">⏱️</div>
+            <div class="ms-stat-num">59h</div>
+            <div class="ms-stat-label">total minutes walked</div>
+          </div>
+          <div class="ms-stat">
+            <div class="ms-stat-emoji">🔥</div>
+            <div class="ms-stat-num">21</div>
+            <div class="ms-stat-label">day best streak</div>
+          </div>
+          <div class="ms-stat">
+            <div class="ms-stat-emoji">🌟</div>
+            <div class="ms-stat-num">8</div>
+            <div class="ms-stat-label">perfect 6/6 days</div>
+          </div>
+        </div>
+
+        <!-- Shareable card -->
+        <div class="share-card">
+          <div class="share-group-name">Nagpur Walkers 🌿</div>
+          <div class="share-headline">
+            We walked together for 21 days straight.<br>118 walks. One team. No zero days.
+          </div>
+          <div class="share-habuild-tag">
+            🚶 Habuild Walking Club · Join us →
+          </div>
+        </div>
+
+        <!-- Personal contribution -->
+        <div class="personal-contrib">
+          <div class="contrib-header">Your Contribution</div>
+          <div class="contrib-row">
+            <div class="contrib-avatar">👤</div>
+            <div class="contrib-info">
+              <div class="contrib-name">Priya (You)</div>
+              <div class="contrib-days">Walked 18 of 21 days with your group</div>
+            </div>
+            <div class="contrib-pct">86%</div>
+          </div>
+
+          <!-- All members bar chart -->
+          <div class="member-contributions">
+            <div style="font-size:12px;font-weight:700;color:var(--text-soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Group contributions</div>
+            <div class="member-contrib-row">
+              <div class="mc-name">Priya</div>
+              <div class="mc-bar-wrap"><div class="mc-bar" style="width:86%"></div></div>
+              <div class="mc-pct">86%</div>
+            </div>
+            <div class="member-contrib-row">
+              <div class="mc-name">Ravi</div>
+              <div class="mc-bar-wrap"><div class="mc-bar" style="width:100%"></div></div>
+              <div class="mc-pct">100% 🌟</div>
+            </div>
+            <div class="member-contrib-row">
+              <div class="mc-name">Sunita</div>
+              <div class="mc-bar-wrap"><div class="mc-bar" style="width:90%"></div></div>
+              <div class="mc-pct">90%</div>
+            </div>
+            <div class="member-contrib-row">
+              <div class="mc-name">Meena</div>
+              <div class="mc-bar-wrap"><div class="mc-bar" style="width:76%"></div></div>
+              <div class="mc-pct">76%</div>
+            </div>
+            <div class="member-contrib-row">
+              <div class="mc-name">Vikram</div>
+              <div class="mc-bar-wrap"><div class="mc-bar" style="width:95%"></div></div>
+              <div class="mc-pct">95%</div>
+            </div>
+            <div class="member-contrib-row">
+              <div class="mc-name">Suresh</div>
+              <div class="mc-bar-wrap"><div class="mc-bar" style="width:81%"></div></div>
+              <div class="mc-pct">81%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Share buttons -->
+        <div class="share-btn-row">
+          <button class="btn-share-group" onclick="showToast('Group card shared to WhatsApp! 🌿')">
+            📤 Share Group Card
+          </button>
+          <button class="btn-share-personal" onclick="showToast('Personal card copied! ✓')">
+            👤 My Card
+          </button>
+        </div>
+
+        <div style="height: 24px;"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- Screen Nav Helper (outside phone) -->
+<div style="
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 999;
+">
+  <button onclick="goToScreen(1)" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);">1 Create</button>
+  <button onclick="goToScreen(2)" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);">2 Group</button>
+  <button onclick="goToScreen(3)" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);">3 Check-in</button>
+  <button onclick="goToScreen(4)" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);">4 League</button>
+  <button onclick="goToScreen(5)" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);">5 Milestone</button>
+</div>
+
+<script>
+  // ── Screen navigation ──
+  function goToScreen(n) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen' + n).classList.add('active');
+  }
+
+  // ── Toast ──
+  let toastTimer;
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  // ── Chip selection ──
+  function selectChip(el, group) {
+    const parent = el.closest('.chip-row');
+    parent.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ── Check-in animation ──
+  let hasCheckedIn = false;
+  function handleCheckin() {
+    if (hasCheckedIn) return;
+    hasCheckedIn = true;
+
+    // Update pending avatar to done
+    const pending = document.getElementById('pendingAvatar');
+    pending.classList.remove('pending');
+    pending.classList.add('done');
+    pending.textContent = 'Y';
+
+    // Update ring to 6/6
+    const arc = document.getElementById('progressArc');
+    arc.style.strokeDashoffset = '0'; // full circle
+
+    // Update count
+    document.getElementById('ringCount').innerHTML = '6<span>/6</span>';
+
+    // Update summary
+    document.querySelector('.checkin-summary').innerHTML =
+      '<strong>6 of 6 members</strong> walked today! 🎉<br>Your group completed the day — amazing!';
+
+    // Update button
+    const btn = document.getElementById('checkinBtn');
+    btn.textContent = '✓ Logged! Group is 6/6 🎉';
+    btn.classList.add('done-state');
+
+    // Fire confetti
+    fireConfetti();
+
+    // Navigate to check-in flow after a short delay
+    setTimeout(() => goToScreen(3), 900);
+  }
+
+  // ── Confetti ──
+  function fireConfetti() {
+    const container = document.getElementById('confettiContainer');
+    const colors = ['#F4871A','#27AE60','#F0B429','#2E6B45','#FF6B6B','#4ECDC4','#FFD199'];
+    for (let i = 0; i < 60; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + '%';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.animationDelay = (Math.random() * 0.8) + 's';
+      piece.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+      piece.style.width = (6 + Math.random() * 8) + 'px';
+      piece.style.height = piece.style.width;
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      container.appendChild(piece);
+      setTimeout(() => piece.remove(), 3500);
+    }
+  }
+
+  // ── Animate week bars on screen 2 load ──
+  // (they use inline height styles, which render immediately via CSS)
+
+  // ── Milestone bar animations on screen 5 ──
+  function animateMilestoneBars() {
+    document.querySelectorAll('.mc-bar').forEach(bar => {
+      const targetWidth = bar.style.width;
+      bar.style.width = '0';
+      setTimeout(() => { bar.style.width = targetWidth; }, 100);
+    });
+  }
+
+  // Observe screen 5 becoming active
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => {
+      if (m.target.id === 'screen5' && m.target.classList.contains('active')) {
+        animateMilestoneBars();
+      }
+    });
+  });
+  document.querySelectorAll('.screen').forEach(s => {
+    observer.observe(s, { attributes: true, attributeFilter: ['class'] });
+  });
+</script>
+
+</body>
+</html>

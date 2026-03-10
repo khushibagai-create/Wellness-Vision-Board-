@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walk Partners — Habuild</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --clay:      #C4633A;
+    --clay-dark: #A04E2C;
+    --clay-light:#E8876A;
+    --cream:     #FAF6F0;
+    --cream-2:   #F2EBE0;
+    --green:     #3D6B4F;
+    --green-light:#5A9070;
+    --green-pale: #D4E8DC;
+    --text-dark:  #1C1917;
+    --text-mid:   #57534E;
+    --text-soft:  #A8A29E;
+    --gold:       #C9901A;
+    --gold-light: #F5E4B0;
+    --white:      #FFFFFF;
+    --shadow:     0 2px 12px rgba(0,0,0,0.10);
+    --shadow-lg:  0 8px 32px rgba(0,0,0,0.14);
+    --radius-sm:  10px;
+    --radius-md:  18px;
+    --radius-lg:  28px;
+    --radius-xl:  40px;
+  }
+
+  body {
+    background: #E8E0D6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    padding: 32px 16px 60px;
+  }
+
+  /* ── Navigation Dots ── */
+  .nav-dots {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(28,25,23,0.2);
+    cursor: pointer;
+    transition: all 0.25s;
+    border: none;
+  }
+  .nav-dot.active {
+    background: var(--clay);
+    width: 24px;
+    border-radius: 4px;
+  }
+  .nav-dot:hover { background: var(--clay-light); }
+
+  .screen-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  /* ── Phone Frame ── */
+  .phone-frame {
+    width: 375px;
+    min-height: 720px;
+    background: var(--cream);
+    border-radius: 48px;
+    box-shadow:
+      0 0 0 10px #2A2420,
+      0 0 0 13px #3D3530,
+      var(--shadow-lg);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Notch */
+  .phone-notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 32px;
+    background: #1A1614;
+    border-radius: 0 0 22px 22px;
+    z-index: 100;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    padding: 14px 24px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark);
+    position: relative;
+    z-index: 10;
+  }
+  .status-time { font-size: 14px; font-weight: 700; }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text-dark); }
+
+  /* ── Screen System ── */
+  .screen {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+  .screen.active { display: flex; }
+
+  /* ── Screen 1: Partner Discovery ── */
+  .s1-hero {
+    background: linear-gradient(160deg, #3D6B4F 0%, #2D5040 100%);
+    padding: 28px 24px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .s1-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .s1-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -30px;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .s1-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
+  }
+
+  .s1-title {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: #FFFFFF;
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  .s1-title em { font-style: italic; color: #A8DDB8; }
+
+  .s1-stat {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .s1-stat-icon {
+    width: 18px; height: 18px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .s1-body { padding: 24px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  .option-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+    border: 2px solid transparent;
+  }
+  .option-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .option-card.selected { border-color: var(--green); }
+
+  .option-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .option-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .option-icon.invite { background: #FEF3C7; }
+  .option-icon.match  { background: var(--green-pale); }
+
+  .option-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+  .option-desc {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.5;
+    padding-left: 52px;
+  }
+
+  .divider-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; color: var(--text-soft); font-weight: 500;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--cream-2); }
+
+  /* Matched Card */
+  .matched-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    border: 2px solid var(--green-pale);
+  }
+  .matched-card-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .avatar-lg {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    flex-shrink: 0;
+  }
+  .avatar-meera { background: linear-gradient(135deg, #C4633A, #E8876A); }
+  .avatar-you   { background: linear-gradient(135deg, #3D6B4F, #5A9070); }
+  .avatar-sm {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .matched-info {}
+  .matched-name {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+  .matched-meta {
+    font-size: 12px;
+    color: var(--text-soft);
+    margin-top: 2px;
+  }
+
+  .matched-pills {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 12px;
+  }
+  .pill {
+    background: var(--cream-2);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-mid);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .pill.green { background: var(--green-pale); color: var(--green); }
+  .pill.clay  { background: #FDEEE8; color: var(--clay); }
+
+  .compatibility-row {
+    background: var(--green-pale);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 500;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 15px 20px;
+    border-radius: var(--radius-sm);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s;
+    width: 100%;
+    text-align: center;
+  }
+  .btn-primary {
+    background: var(--green);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--green-light); transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: var(--cream-2);
+    color: var(--text-dark);
+  }
+  .btn-secondary:hover { background: #E8DFD0; }
+
+  .btn-clay {
+    background: var(--clay);
+    color: white;
+  }
+  .btn-clay:hover { background: var(--clay-dark); transform: translateY(-1px); }
+
+  .btn-outline-green {
+    background: transparent;
+    color: var(--green);
+    border: 2px solid var(--green-pale);
+  }
+  .btn-outline-green:hover { background: var(--green-pale); }
+
+  /* ── Screen 2: Partnership Confirmed ── */
+  .s2-celebration {
+    background: linear-gradient(160deg, #2D5040 0%, #1E3828 100%);
+    padding: 36px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .s2-avatars {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .s2-avatar-you, .s2-avatar-meera {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: white;
+    border: 3px solid rgba(255,255,255,0.3);
+    position: relative;
+    z-index: 2;
+  }
+  .s2-avatar-you  { background: linear-gradient(135deg, #3D6B4F, #5A9070); }
+  .s2-avatar-meera { background: linear-gradient(135deg, #C4633A, #E8876A); }
+
+  .s2-connect-line {
+    width: 48px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green-light), var(--clay-light));
+    position: relative;
+    z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .s2-connect-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+  }
+
+  .s2-confirmed-badge {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+
+  .s2-title {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .s2-title em { font-style: italic; color: #A8DDB8; }
+
+  .s2-subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    text-align: center;
+  }
+
+  .s2-body { padding: 24px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  .mechanic-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .mechanic-title {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .mechanic-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--cream-2);
+  }
+  .mechanic-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .mechanic-avatar-pair {
+    display: flex;
+    align-items: center;
+    gap: -4px;
+    flex-shrink: 0;
+  }
+
+  .mechanic-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.4;
+  }
+  .mechanic-text strong { color: var(--text-dark); }
+  .mechanic-point {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--clay);
+    flex-shrink: 0;
+  }
+
+  .mechanic-footer {
+    margin-top: 14px;
+    padding: 12px;
+    background: var(--green-pale);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 500;
+    text-align: center;
+    font-style: italic;
+  }
+
+  .milestone-preview {
+    background: var(--cream-2);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .milestone-icon-box {
+    width: 44px; height: 44px;
+    background: var(--gold-light);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .milestone-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-soft);
+    margin-bottom: 2px;
+  }
+  .milestone-text {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  /* ── Screen 3: Partner Dashboard ── */
+  .s3-header {
+    background: linear-gradient(150deg, #2D5040 0%, #1E3828 100%);
+    padding: 18px 20px 28px;
+  }
+  .s3-header-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 10px;
+  }
+  .s3-partner-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .s3-avatar-group {
+    display: flex;
+    align-items: center;
+  }
+  .s3-avatar-you  { background: linear-gradient(135deg, #3D6B4F, #5A9070); }
+  .s3-avatar-meera { background: linear-gradient(135deg, #C4633A, #E8876A); }
+  .s3-avatar-pair-line {
+    width: 24px; height: 2px;
+    background: rgba(255,255,255,0.3);
+    margin: 0 -2px;
+  }
+  .s3-partner-name {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    flex: 1;
+  }
+  .s3-streak-pill {
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .s3-body { padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* Score Card — the most important element */
+  .score-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 0;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .score-card-header {
+    background: var(--cream-2);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .score-week-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .score-week-sub {
+    font-size: 11px;
+    color: var(--text-soft);
+    margin-top: 1px;
+  }
+
+  .score-body {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+  .score-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .score-avatar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .score-player-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-mid);
+  }
+  .score-number {
+    font-family: 'Fraunces', serif;
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+  .score-number.green-score { color: var(--green); }
+  .score-number.clay-score  { color: var(--clay); }
+
+  .score-sublabel {
+    font-size: 11px;
+    color: var(--text-soft);
+    text-align: center;
+    line-height: 1.4;
+    max-width: 100px;
+  }
+
+  .score-divider {
+    width: 1px;
+    height: 80px;
+    background: var(--cream-2);
+    margin: 0 12px;
+    align-self: center;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .score-divider::after {
+    content: '&';
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    color: var(--text-soft);
+    background: white;
+    padding: 2px 4px;
+    position: absolute;
+  }
+
+  .score-footer {
+    border-top: 1px solid var(--cream-2);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .score-footer-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green-light);
+    flex-shrink: 0;
+  }
+  .score-footer-text {
+    font-size: 12px;
+    color: var(--text-mid);
+  }
+  .score-footer-text strong { color: var(--green); }
+
+  /* Today Status */
+  .today-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .today-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-soft);
+  }
+
+  .today-meera-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    background: #F0FAF4;
+    border: 1.5px solid #B8E4C8;
+  }
+  .today-status-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    color: white;
+  }
+  .today-status-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-dark);
+    line-height: 1.4;
+  }
+  .today-status-text strong { font-weight: 600; }
+  .today-point-badge {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--green);
+    background: var(--green-pale);
+    border-radius: 8px;
+    padding: 4px 10px;
+  }
+
+  .walk-btn {
+    background: linear-gradient(135deg, var(--clay), var(--clay-dark));
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 4px 16px rgba(196,99,58,0.3);
+    border: none;
+    width: 100%;
+  }
+  .walk-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(196,99,58,0.4); }
+  .walk-btn-left { display: flex; align-items: center; gap: 12px; }
+  .walk-btn-icon {
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .walk-btn-text { text-align: left; }
+  .walk-btn-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+  }
+  .walk-btn-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    margin-top: 1px;
+  }
+  .walk-btn-arrow {
+    font-size: 20px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* Milestone Progress */
+  .milestone-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .milestone-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .milestone-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+  .milestone-badge-preview {
+    font-size: 20px;
+  }
+  .progress-bar-wrap {
+    background: var(--cream-2);
+    border-radius: 99px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--green-light), var(--green));
+    width: 66%;
+    transition: width 0.5s ease;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-soft);
+  }
+  .progress-label span { font-weight: 600; color: var(--text-mid); }
+
+  /* ── Screen 4: Notification ── */
+  .s4-lockscreen {
+    flex: 1;
+    background: linear-gradient(170deg, #1A2E22 0%, #0F1C16 40%, #1A2E22 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .s4-lockscreen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .s4-clock {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .s4-time {
+    font-size: 72px;
+    font-weight: 200;
+    color: white;
+    letter-spacing: -3px;
+    line-height: 1;
+  }
+  .s4-date {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 4px;
+  }
+
+  .s4-notification {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 18px;
+    padding: 16px;
+    margin: 0 20px;
+    width: calc(100% - 40px);
+    cursor: pointer;
+    transition: transform 0.18s, background 0.18s;
+    position: relative;
+  }
+  .s4-notification:hover { background: rgba(255,255,255,0.16); transform: scale(1.01); }
+
+  .s4-notif-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .s4-notif-app {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .s4-app-icon {
+    width: 18px; height: 18px;
+    background: var(--green);
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+  .s4-notif-time {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .s4-notif-body {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .s4-notif-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--clay), var(--clay-light));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    flex-shrink: 0;
+  }
+  .s4-notif-text {}
+  .s4-notif-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .s4-notif-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.45;
+  }
+
+  .s4-notif-action {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #A8DDB8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .s4-tip {
+    margin-top: 20px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+  }
+
+  .s4-bottom {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* ── Screen 5: Milestone ── */
+  .s5-celebration {
+    background: linear-gradient(160deg, #1E3828 0%, #2D5040 50%, #3D6B4F 100%);
+    padding: 36px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .s5-badge-ring {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold) 0%, #F5C842 50%, var(--gold) 100%);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    box-shadow:
+      0 0 0 6px rgba(201,144,26,0.2),
+      0 0 0 12px rgba(201,144,26,0.1),
+      0 12px 40px rgba(201,144,26,0.4);
+    position: relative;
+    animation: float 3s ease-in-out infinite;
+  }
+  .s5-badge-inner {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #B8800F 0%, #D4A020 50%, #B8800F 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2px;
+  }
+  .s5-badge-emoji { font-size: 36px; }
+  .s5-badge-text {
+    font-family: 'Fraunces', serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .s5-title {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .s5-title em { font-style: italic; color: #A8DDB8; }
+  .s5-subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    text-align: center;
+  }
+
+  .s5-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  .stats-row {
+    display: flex;
+    gap: 10px;
+  }
+  .stat-box {
+    flex: 1;
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    box-shadow: var(--shadow);
+  }
+  .stat-number {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-soft);
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .share-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .share-card-inner {
+    background: linear-gradient(135deg, #1E3828, #2D5040);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .share-avatars {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .share-connect {
+    font-size: 20px;
+  }
+  .share-quote {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+    line-height: 1.5;
+  }
+  .share-hashtag {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+  .share-card-footer {
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .share-card-label {
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+  .share-preview-btn {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  .s5-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .s5-actions .btn { flex: 1; }
+
+  /* ── Animations ── */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  @keyframes connect-draw {
+    from { width: 0; opacity: 0; }
+    to   { width: 48px; opacity: 1; }
+  }
+
+  @keyframes pop-in {
+    0%   { transform: scale(0.5); opacity: 0; }
+    70%  { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes confetti-fall {
+    0%   { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(80px) rotate(360deg); opacity: 0; }
+  }
+
+  @keyframes point-pop {
+    0%  { transform: scale(0) translateY(0); opacity: 0; }
+    60% { transform: scale(1.2) translateY(-16px); opacity: 1; }
+    100%{ transform: scale(1) translateY(-20px); opacity: 0; }
+  }
+
+  .screen.active > * {
+    animation: fadeSlideUp 0.35s ease both;
+  }
+
+  .s2-connect-line {
+    animation: connect-draw 0.5s 0.3s ease both;
+  }
+
+  .s5-badge-ring {
+    animation: pop-in 0.6s 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both, float 3s 0.8s ease-in-out infinite;
+  }
+
+  /* Confetti dots for Screen 5 */
+  .confetti-dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    animation: confetti-fall 1.5s ease forwards;
+  }
+
+  /* Point Pop overlay */
+  .point-pop {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green);
+    pointer-events: none;
+    animation: point-pop 1.5s ease forwards;
+  }
+
+  /* ── Pulse dot (live indicator) ── */
+  .live-dot {
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .live-dot-inner {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #4ADE80;
+    position: relative;
+  }
+  .live-dot-inner::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: rgba(74,222,128,0.4);
+    animation: pulse-ring 1.5s ease-out infinite;
+  }
+
+  /* ── Back nav ── */
+  .back-nav {
+    padding: 12px 20px 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-mid);
+  }
+  .back-nav:hover { color: var(--text-dark); }
+
+  /* ── Invite input ── */
+  .invite-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .invite-input {
+    flex: 1;
+    padding: 12px 14px;
+    border: 1.5px solid var(--cream-2);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.18s;
+  }
+  .invite-input:focus { border-color: var(--green); }
+  .invite-input::placeholder { color: var(--text-soft); }
+  .invite-icon-btn {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-sm);
+    background: var(--green);
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: background 0.18s;
+  }
+  .invite-icon-btn:hover { background: var(--green-light); }
+
+  /* ── Screen indicators ── */
+  .screen-nav-label {
+    position: absolute;
+    bottom: 8px; left: 0; right: 0;
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    pointer-events: none;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 420px) {
+    .phone-frame { width: 100%; border-radius: 0; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div class="nav-dots" id="navDots">
+  <button class="nav-dot active" onclick="goTo(0)" title="Partner Discovery"></button>
+  <button class="nav-dot" onclick="goTo(1)" title="Partnership Confirmed"></button>
+  <button class="nav-dot" onclick="goTo(2)" title="Partner Dashboard"></button>
+  <button class="nav-dot" onclick="goTo(3)" title="Notification"></button>
+  <button class="nav-dot" onclick="goTo(4)" title="Milestone"></button>
+</div>
+<div class="screen-label" id="screenLabel">Screen 1 of 5 — Partner Discovery</div>
+
+<!-- Phone Frame -->
+<div class="phone-frame">
+  <div class="phone-notch"></div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 1: Partner Discovery            -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="screen active" id="screen-0">
+    <!-- Hero -->
+    <div class="s1-hero">
+      <div class="s1-tag">🌿 Walk Partners Beta</div>
+      <div class="s1-title">Find your<br><em>Walk Partner</em></div>
+      <div class="s1-stat">
+        <div class="s1-stat-icon">📊</div>
+        <span>People who walk with a partner are <strong style="color:white">2× more likely</strong> to stick with it long-term</span>
+      </div>
+    </div>
+
+    <div class="s1-body">
+      <!-- Option 1: Invite someone -->
+      <div class="option-card">
+        <div class="option-card-header">
+          <div class="option-icon invite">👋</div>
+          <div class="option-title">Invite someone you know</div>
+        </div>
+        <div class="option-desc" style="margin-bottom:12px;">Share a link with a friend or family member — they join as your partner</div>
+        <div class="invite-input-row">
+          <input class="invite-input" type="text" placeholder="Search contacts or enter name…">
+          <button class="invite-icon-btn" onclick="goTo(1)">🔗</button>
+        </div>
+        <button class="btn btn-secondary" style="margin-top:10px;" onclick="goTo(1)">
+          Share invite link →
+        </button>
+      </div>
+
+      <div class="divider-row">
+        <div class="divider-line"></div>
+        <span>or</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Option 2: Match -->
+      <div>
+        <div style="font-size:13px; font-weight:600; color:var(--text-mid); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+          <span class="live-dot"><span class="live-dot-inner"></span></span>
+          Match me with a Habuild member
+        </div>
+
+        <!-- Matched Member Card -->
+        <div class="matched-card">
+          <div class="matched-card-top">
+            <div class="avatar-lg avatar-meera">M</div>
+            <div class="matched-info">
+              <div class="matched-name">Meera S.</div>
+              <div class="matched-meta">Mumbai · Habuild member since 2023</div>
+            </div>
+            <div style="font-size:20px; color:var(--text-soft);">✓</div>
+          </div>
+
+          <div class="matched-pills">
+            <div class="pill">🌙 Walks after dinner</div>
+            <div class="pill green">Active 3 days ago</div>
+            <div class="pill clay">7-day streak</div>
+          </div>
+
+          <div class="compatibility-row">
+            🌿 Both prefer evening walks · Similar schedule
+          </div>
+
+          <button class="btn btn-primary" onclick="goTo(1)">
+            Send partner request to Meera →
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 2: Partnership Confirmed        -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="screen" id="screen-1">
+    <!-- Celebration Hero -->
+    <div class="s2-celebration">
+      <!-- Confetti (static decorative) -->
+      <div style="position:absolute;top:20px;left:30px;font-size:16px;opacity:0.6;animation:confetti-fall 2s 0.2s ease forwards;">🌿</div>
+      <div style="position:absolute;top:30px;right:40px;font-size:12px;opacity:0.5;animation:confetti-fall 2.2s 0.4s ease forwards;">✨</div>
+      <div style="position:absolute;top:10px;left:60%;font-size:14px;opacity:0.4;animation:confetti-fall 1.8s 0.6s ease forwards;">🎯</div>
+      <div style="position:absolute;top:50px;left:20%;font-size:10px;opacity:0.5;animation:confetti-fall 2.4s 0.1s ease forwards;">⭐</div>
+
+      <div class="s2-confirmed-badge">✓ Partnership confirmed</div>
+
+      <!-- Avatar Connection -->
+      <div class="s2-avatars">
+        <div class="s2-avatar-you">Y</div>
+        <div class="s2-connect-line">
+          <div class="s2-connect-dot"></div>
+        </div>
+        <div class="s2-avatar-meera">M</div>
+      </div>
+
+      <div class="s2-title">You and <em>Meera</em><br>are Walk Partners! 🌿</div>
+      <div class="s2-subtitle">Your habit, each other's win</div>
+    </div>
+
+    <div class="s2-body">
+
+      <!-- Mechanic Explainer -->
+      <div class="mechanic-card">
+        <div class="mechanic-title">
+          🎯 How it works
+        </div>
+
+        <div class="mechanic-row">
+          <div class="avatar-sm avatar-meera" style="background:linear-gradient(135deg,#C4633A,#E8876A);">M</div>
+          <div class="mechanic-text">
+            When <strong>Meera walks</strong> → <strong>you get a point</strong>
+          </div>
+          <div class="mechanic-point">+1 🎯</div>
+        </div>
+
+        <div class="mechanic-row">
+          <div class="avatar-sm avatar-you" style="background:linear-gradient(135deg,#3D6B4F,#5A9070);">Y</div>
+          <div class="mechanic-text">
+            When <strong>you walk</strong> → <strong>Meera gets a point</strong>
+          </div>
+          <div class="mechanic-point">+1 🎯</div>
+        </div>
+
+        <div class="mechanic-footer">
+          "Walk for each other. Build the habit together."
+        </div>
+      </div>
+
+      <!-- First Milestone -->
+      <div class="milestone-preview">
+        <div class="milestone-icon-box">🏅</div>
+        <div>
+          <div class="milestone-label">Your first milestone</div>
+          <div class="milestone-text">Both walk for 7 days together</div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <button class="btn btn-clay" onclick="goTo(2)">
+        Start walking together →
+      </button>
+
+      <div style="text-align:center; font-size:12px; color:var(--text-soft);">
+        You can change partners after 30 days
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 3: Partner Dashboard            -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="screen" id="screen-2">
+
+    <!-- Header -->
+    <div class="s3-header">
+      <div class="s3-header-label">Walk Partners</div>
+      <div class="s3-partner-row">
+        <div class="s3-avatar-group">
+          <div class="avatar-sm s3-avatar-you" style="background:linear-gradient(135deg,#3D6B4F,#5A9070);border:2px solid rgba(255,255,255,0.3);">Y</div>
+          <div class="s3-avatar-pair-line"></div>
+          <div class="avatar-sm s3-avatar-meera" style="background:linear-gradient(135deg,#C4633A,#E8876A);border:2px solid rgba(255,255,255,0.3);">M</div>
+        </div>
+        <div class="s3-partner-name">You &amp; Meera</div>
+        <div class="s3-streak-pill">🔥 7 days</div>
+      </div>
+    </div>
+
+    <div class="s3-body">
+
+      <!-- ★ THE SCORE CARD — KEY ELEMENT ★ -->
+      <div class="score-card">
+        <div class="score-card-header">
+          <div>
+            <div class="score-week-label">This week's score</div>
+            <div class="score-week-sub">Mon 3 — Sun 9 March</div>
+          </div>
+          <div style="font-size:12px; color:var(--text-soft); font-weight:500;">7 days</div>
+        </div>
+
+        <div class="score-body">
+          <!-- Your Score (points Meera earned FOR you) -->
+          <div class="score-side">
+            <div class="score-avatar-wrap">
+              <div class="avatar-sm" style="background:linear-gradient(135deg,#3D6B4F,#5A9070); width:28px; height:28px; font-size:11px; color:white; display:flex; align-items:center; justify-content:center; border-radius:50%; font-family:'Fraunces',serif; font-weight:600;">Y</div>
+              <span class="score-player-name">Your score</span>
+            </div>
+            <div class="score-number green-score" id="yourScore">5</div>
+            <div class="score-sublabel">points Meera earned for you</div>
+          </div>
+
+          <!-- Divider -->
+          <div class="score-divider"></div>
+
+          <!-- Meera's Score (points you earned FOR her) -->
+          <div class="score-side">
+            <div class="score-avatar-wrap">
+              <div class="avatar-sm" style="background:linear-gradient(135deg,#C4633A,#E8876A); width:28px; height:28px; font-size:11px; color:white; display:flex; align-items:center; justify-content:center; border-radius:50%; font-family:'Fraunces',serif; font-weight:600;">M</div>
+              <span class="score-player-name">Meera's score</span>
+            </div>
+            <div class="score-number clay-score" id="meeraScore">6</div>
+            <div class="score-sublabel">points you earned for her</div>
+          </div>
+        </div>
+
+        <div class="score-footer">
+          <div class="score-footer-dot"></div>
+          <div class="score-footer-text">
+            You walked <strong>6 days</strong> this week → <strong>Meera got 6 points</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Status -->
+      <div class="today-card">
+        <div class="today-label">Today · Tuesday</div>
+
+        <!-- Meera walked ✓ -->
+        <div class="today-meera-row" style="position:relative;" id="meeraStatusRow">
+          <div class="today-status-icon">✓</div>
+          <div class="today-status-text">
+            <strong>Meera walked today</strong><br>
+            <span style="font-size:12px; color:var(--text-soft);">She logged 20 mins around 7 PM</span>
+          </div>
+          <div class="today-point-badge">+1</div>
+        </div>
+
+        <!-- Your walk CTA -->
+        <button class="walk-btn" onclick="logWalk()">
+          <div class="walk-btn-left">
+            <div class="walk-btn-icon">🚶</div>
+            <div class="walk-btn-text">
+              <div class="walk-btn-title">I walked today</div>
+              <div class="walk-btn-sub">Meera gets +1 point 🎯</div>
+            </div>
+          </div>
+          <div class="walk-btn-arrow">→</div>
+        </button>
+      </div>
+
+      <!-- Milestone Progress -->
+      <div class="milestone-card">
+        <div class="milestone-header">
+          <div class="milestone-card-title">🏅 Next milestone: Gold Partner</div>
+          <div class="milestone-badge-preview">🥇</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width:66%;"></div>
+        </div>
+        <div class="progress-label">
+          <span>14 days done</span>
+          <span>3 more days to Gold</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 4: Partner Notification         -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="screen" id="screen-3" style="padding:0;">
+    <div class="s4-lockscreen">
+      <!-- Clock -->
+      <div class="s4-clock">
+        <div class="s4-time">6:47</div>
+        <div class="s4-date">Tuesday, 10 March</div>
+      </div>
+
+      <!-- Notification -->
+      <div class="s4-notification" onclick="goTo(2)">
+        <div class="s4-notif-header">
+          <div class="s4-notif-app">
+            <div class="s4-app-icon">🌿</div>
+            HABUILD
+          </div>
+          <div class="s4-notif-time">just now</div>
+        </div>
+
+        <div class="s4-notif-body">
+          <div class="s4-notif-avatar">M</div>
+          <div class="s4-notif-text">
+            <div class="s4-notif-title">🌿 Meera walked today!</div>
+            <div class="s4-notif-desc">She walked 15 mins after lunch. You got +1 point.</div>
+          </div>
+        </div>
+
+        <div class="s4-notif-action">
+          <span>Walk today so she gets her point too</span>
+          <span style="opacity:0.7;">→</span>
+        </div>
+      </div>
+
+      <div class="s4-tip" style="margin-top:12px; padding: 0 20px;">
+        Tap notification to open Walk Partners →
+      </div>
+    </div>
+
+    <div class="s4-bottom" style="background:var(--cream);">
+      <div style="font-size:13px; color:var(--text-mid); text-align:center; font-weight:500;">
+        You haven't walked yet today
+      </div>
+      <button class="btn btn-clay" onclick="goTo(2)">
+        🚶 Log my walk now →
+      </button>
+      <button class="btn btn-secondary" onclick="goTo(2)">
+        View partner dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 5: Milestone Reached            -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="screen" id="screen-4">
+    <div class="s5-celebration">
+      <!-- Floating confetti -->
+      <div style="position:absolute;top:16px;left:24px;font-size:18px;animation:confetti-fall 2s 0.3s ease forwards;opacity:0.7;">🌿</div>
+      <div style="position:absolute;top:24px;right:32px;font-size:14px;animation:confetti-fall 2.5s 0.6s ease forwards;opacity:0.6;">✨</div>
+      <div style="position:absolute;top:8px;left:55%;font-size:16px;animation:confetti-fall 1.8s 0.1s ease forwards;opacity:0.5;">⭐</div>
+      <div style="position:absolute;top:40px;left:15%;font-size:12px;animation:confetti-fall 2.2s 0.8s ease forwards;opacity:0.6;">🎉</div>
+      <div style="position:absolute;top:12px;right:60%;font-size:10px;animation:confetti-fall 2.8s 0.4s ease forwards;opacity:0.4;">🌟</div>
+
+      <!-- Gold Badge -->
+      <div class="s5-badge-ring">
+        <div class="s5-badge-inner">
+          <div class="s5-badge-emoji">🌿</div>
+          <div class="s5-badge-text">Gold<br>Walk<br>Partners</div>
+        </div>
+      </div>
+
+      <div class="s5-title">You and <em>Meera</em><br>— 21 days together! 🌿</div>
+      <div class="s5-subtitle">You built a real habit. That's everything.</div>
+    </div>
+
+    <div class="s5-body">
+
+      <!-- Stats Row -->
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-number">42</div>
+          <div class="stat-label">days walked<br>combined</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">630</div>
+          <div class="stat-label">minutes<br>of walking</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">15</div>
+          <div class="stat-label">avg mins<br>per walk</div>
+        </div>
+      </div>
+
+      <!-- Shareable Card -->
+      <div class="share-card">
+        <div class="share-card-inner">
+          <div class="share-avatars">
+            <div class="avatar-sm" style="background:linear-gradient(135deg,#3D6B4F,#5A9070); color:white; font-family:'Fraunces',serif; font-weight:600; display:flex; align-items:center; justify-content:center; font-size:14px;">Y</div>
+            <span class="share-connect" style="margin:0 6px; color:rgba(255,255,255,0.5);">🌿</span>
+            <div class="avatar-sm" style="background:linear-gradient(135deg,#C4633A,#E8876A); color:white; font-family:'Fraunces',serif; font-weight:600; display:flex; align-items:center; justify-content:center; font-size:14px;">M</div>
+          </div>
+          <div class="share-quote">"Meera and I built a 21-day walk habit together 🌿"</div>
+          <div class="share-hashtag">#HabuildWalkingClub · habuild.in</div>
+        </div>
+        <div class="share-card-footer">
+          <div class="share-card-label">Gold Walk Partners badge</div>
+          <div class="share-preview-btn">Preview card →</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="s5-actions">
+        <button class="btn btn-secondary">📤 Share this</button>
+        <button class="btn btn-clay" onclick="goTo(2)">Keep going →</button>
+      </div>
+
+      <div style="text-align:center; font-size:12px; color:var(--text-soft); padding-bottom:8px;">
+        Next milestone: Platinum Partners at 42 days 🔥
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<!-- End Phone Frame -->
+
+<script>
+  const screenLabels = [
+    "Screen 1 of 5 — Partner Discovery",
+    "Screen 2 of 5 — Partnership Confirmed",
+    "Screen 3 of 5 — Partner Dashboard",
+    "Screen 4 of 5 — Partner Notification",
+    "Screen 5 of 5 — Milestone Reached",
+  ];
+
+  let currentScreen = 0;
+
+  function goTo(index) {
+    const screens = document.querySelectorAll('.screen');
+    const dots = document.querySelectorAll('.nav-dot');
+    const label = document.getElementById('screenLabel');
+
+    screens[currentScreen].classList.remove('active');
+    dots[currentScreen].classList.remove('active');
+
+    currentScreen = index;
+
+    screens[currentScreen].classList.add('active');
+    dots[currentScreen].classList.add('active');
+    label.textContent = screenLabels[currentScreen];
+
+    // Reset scroll
+    screens[currentScreen].scrollTop = 0;
+  }
+
+  // Walk logging interaction on Screen 3
+  function logWalk() {
+    const btn = document.querySelector('.walk-btn');
+    const meeraScore = document.getElementById('meeraScore');
+
+    // Animate the walk button
+    btn.style.transform = 'scale(0.97)';
+    btn.style.background = 'linear-gradient(135deg, var(--green), var(--green-light))';
+
+    // Show +1 point pop
+    const pop = document.createElement('div');
+    pop.className = 'point-pop';
+    pop.textContent = '+1 for Meera!';
+    pop.style.cssText = `
+      position: fixed;
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--clay);
+      pointer-events: none;
+      animation: point-pop 1.8s ease forwards;
+      z-index: 999;
+    `;
+
+    // Position relative to walk button
+    const btnRect = btn.getBoundingClientRect();
+    pop.style.top = (btnRect.top - 30) + 'px';
+    pop.style.left = btnRect.left + 'px';
+    document.body.appendChild(pop);
+
+    // Update score
+    setTimeout(() => {
+      const current = parseInt(meeraScore.textContent);
+      meeraScore.textContent = current + 1;
+      meeraScore.style.transform = 'scale(1.15)';
+      meeraScore.style.transition = 'transform 0.2s';
+      setTimeout(() => { meeraScore.style.transform = 'scale(1)'; }, 200);
+    }, 400);
+
+    // Update button state
+    setTimeout(() => {
+      btn.innerHTML = `
+        <div class="walk-btn-left">
+          <div class="walk-btn-icon">✓</div>
+          <div class="walk-btn-text">
+            <div class="walk-btn-title">Walked today!</div>
+            <div class="walk-btn-sub">Meera got +1 point 🎉</div>
+          </div>
+        </div>
+        <div class="walk-btn-arrow" style="font-size:16px;color:rgba(255,255,255,0.9);">✓</div>
+      `;
+      btn.style.transform = 'scale(1)';
+    }, 300);
+
+    // Clean up pop
+    setTimeout(() => {
+      if (pop.parentNode) pop.parentNode.removeChild(pop);
+    }, 2000);
+  }
+
+  // Keyboard nav
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' && currentScreen < 4) goTo(currentScreen + 1);
+    if (e.key === 'ArrowLeft' && currentScreen > 0) goTo(currentScreen - 1);
+  });
+</script>
+</body>
+</html>

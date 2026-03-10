@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Walking Club — Clubs by Habuild</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest-900: #1a2e1a;
+      --forest-800: #1e3a1e;
+      --forest-700: #2a4a2a;
+      --forest-600: #3a6b3a;
+      --forest-500: #4a8c4a;
+      --forest-400: #6aad6a;
+      --forest-300: #8ece8e;
+      --forest-200: #b8e4b8;
+      --forest-100: #dff2df;
+      --forest-50:  #f2faf2;
+      --cream-900: #3d3020;
+      --cream-700: #6b5a3e;
+      --cream-500: #a08060;
+      --cream-300: #d4b896;
+      --cream-200: #e8d5ba;
+      --cream-100: #f5ead8;
+      --cream-50:  #fdf8f0;
+      --warm-white: #fefcf8;
+      --text-primary: #1a2e1a;
+      --text-secondary: #4a5e4a;
+      --text-muted: #7a9a7a;
+      --border: #dae8da;
+    }
+
+    html, body {
+      height: 100%;
+      background: #d4c8b0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Phone frame */
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      background: var(--warm-white);
+      border-radius: 44px;
+      box-shadow:
+        0 0 0 10px #1a1a1a,
+        0 0 0 12px #2a2a2a,
+        0 30px 80px rgba(0,0,0,0.45),
+        0 10px 30px rgba(0,0,0,0.3);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status bar */
+    .status-bar {
+      height: 44px;
+      background: var(--warm-white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px 0 28px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 10;
+    }
+    .status-bar.dark {
+      background: var(--forest-900);
+    }
+    .status-time {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+    .status-bar.dark .status-time { color: #fff; }
+    .status-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .status-icons svg { opacity: 0.8; }
+
+    /* Screen container */
+    .screens {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--warm-white);
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .screen::-webkit-scrollbar { display: none; }
+    .screen.active {
+      transform: translateX(0);
+    }
+    .screen.exit-left {
+      transform: translateX(-30%);
+    }
+
+    /* =================== SCREEN 1: Club Discovery =================== */
+    #screen1 {
+      background: var(--cream-50);
+    }
+
+    .discovery-header {
+      padding: 20px 20px 0;
+    }
+    .discovery-header .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--forest-100);
+      color: var(--forest-700);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .discovery-header h1 {
+      font-family: 'Lora', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--forest-900);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .discovery-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .clubs-scroll {
+      padding: 20px 20px 0;
+    }
+
+    /* Featured club card */
+    .club-card-featured {
+      background: var(--forest-900);
+      border-radius: 20px;
+      padding: 22px;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .club-card-featured:active { transform: scale(0.98); }
+    .club-card-featured::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(106,173,106,0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .club-card-featured::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: -20px;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(212,184,150,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .featured-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(106,173,106,0.25);
+      color: var(--forest-300);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+    .club-icon-large {
+      font-size: 36px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .club-card-featured h2 {
+      font-family: 'Lora', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .club-card-featured .club-tagline {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .club-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .club-meta-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.85);
+      font-weight: 500;
+    }
+    .club-meta-pill .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #6aad6a;
+      flex-shrink: 0;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+    .join-btn-featured {
+      width: 100%;
+      background: linear-gradient(135deg, var(--forest-400), var(--forest-500));
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.2px;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .join-btn-featured:active {
+      transform: scale(0.97);
+      background: linear-gradient(135deg, var(--forest-500), var(--forest-600));
+    }
+
+    /* Small club cards */
+    .clubs-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 0 20px 24px;
+    }
+    .club-card-small {
+      background: var(--warm-white);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .club-card-small:active {
+      transform: scale(0.97);
+      border-color: var(--forest-300);
+      background: var(--forest-50);
+    }
+    .club-card-small .club-icon-sm {
+      font-size: 26px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .club-card-small h3 {
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .club-card-small p {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .club-card-small .members-sm {
+      margin-top: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--forest-500);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .coming-soon-badge {
+      display: inline-block;
+      background: var(--cream-100);
+      color: var(--cream-700);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+
+    .section-label {
+      padding: 4px 20px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* =================== SCREEN 2: Onboarding =================== */
+    #screen2 {
+      background: var(--cream-50);
+    }
+
+    .onboard-header {
+      background: var(--forest-900);
+      padding: 20px 20px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .onboard-header::after {
+      content: '';
+      position: absolute;
+      bottom: -20px; right: -20px;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(106,173,106,0.2) 0%, transparent 70%);
+    }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 16px;
+      width: fit-content;
+    }
+    .back-btn:active { opacity: 0.6; }
+    .onboard-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .onboard-header h2 {
+      font-family: 'Lora', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .onboard-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .onboard-body {
+      padding: 24px 20px;
+    }
+
+    .onboard-section {
+      margin-bottom: 28px;
+    }
+    .onboard-section label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.3px;
+      margin-bottom: 12px;
+    }
+    .onboard-section label .emoji {
+      margin-right: 4px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      background: var(--warm-white);
+      border: 1.5px solid var(--border);
+      border-radius: 24px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chip:active { transform: scale(0.95); }
+    .chip.selected {
+      background: var(--forest-900);
+      border-color: var(--forest-900);
+      color: #fff;
+    }
+    .chip.selected-light {
+      background: var(--forest-100);
+      border-color: var(--forest-400);
+      color: var(--forest-800);
+    }
+
+    .reminder-box {
+      background: var(--warm-white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .reminder-box .bell-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .reminder-box p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .reminder-box p strong {
+      color: var(--forest-700);
+    }
+
+    .rule-box {
+      background: var(--forest-50);
+      border: 1.5px solid var(--forest-200);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .rule-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .rule-text {
+      font-size: 14px;
+      color: var(--forest-800);
+      line-height: 1.55;
+      font-weight: 500;
+    }
+    .rule-text span {
+      color: var(--forest-500);
+      font-weight: 600;
+    }
+
+    .sb-quote-card {
+      background: var(--forest-900);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .sb-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--forest-400), var(--forest-600));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lora', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.15);
+    }
+    .sb-quote-text {
+      flex: 1;
+    }
+    .sb-quote-text p {
+      font-family: 'Lora', serif;
+      font-size: 13.5px;
+      font-style: italic;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.55;
+      margin-bottom: 8px;
+    }
+    .sb-quote-text .sb-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--forest-300);
+      letter-spacing: 0.3px;
+    }
+
+    .join-btn-main {
+      width: 100%;
+      background: linear-gradient(135deg, var(--forest-600), var(--forest-800));
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 17px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.2px;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
+    .join-btn-main:active {
+      transform: scale(0.97);
+    }
+
+    /* =================== SCREEN 3: Club Home =================== */
+    #screen3 {
+      background: var(--cream-50);
+    }
+
+    .club-home-header {
+      background: var(--forest-900);
+      padding: 20px 20px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .club-home-header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(106,173,106,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .header-back {
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      font-size: 22px;
+      line-height: 1;
+    }
+    .header-more {
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .club-home-title {
+      text-align: center;
+    }
+    .club-home-title h2 {
+      font-family: 'Lora', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .club-home-title .member-count {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 2px;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      padding: 20px 20px 0;
+    }
+    .stat-card {
+      flex: 1;
+      background: var(--warm-white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .stat-card .stat-val {
+      font-family: 'Lora', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--forest-800);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-card .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .stat-card.streak-card .stat-val {
+      color: #e67e22;
+    }
+
+    /* Community ring */
+    .community-card {
+      margin: 16px 20px 0;
+      background: var(--warm-white);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .ring-wrap {
+      flex-shrink: 0;
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+    .ring-wrap svg {
+      width: 80px;
+      height: 80px;
+      transform: rotate(-90deg);
+    }
+    .ring-track {
+      fill: none;
+      stroke: var(--forest-100);
+      stroke-width: 7;
+    }
+    .ring-fill {
+      fill: none;
+      stroke: var(--forest-500);
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-dasharray: 220;
+      stroke-dashoffset: 220;
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .ring-fill.animated {
+      stroke-dashoffset: 58;
+    }
+    .ring-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+    }
+    .ring-percent {
+      font-family: 'Lora', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--forest-800);
+      line-height: 1;
+    }
+    .ring-label-small {
+      font-size: 8px;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .community-text h3 {
+      font-family: 'Lora', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .community-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Check-in card */
+    .checkin-card {
+      margin: 14px 20px 0;
+      background: linear-gradient(135deg, var(--forest-900) 0%, #2a4a2a 100%);
+      border-radius: 18px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .checkin-card::after {
+      content: '';
+      position: absolute;
+      bottom: -20px; right: -20px;
+      width: 100px; height: 100px;
+      background: radial-gradient(circle, rgba(212,184,150,0.15) 0%, transparent 70%);
+    }
+    .checkin-card h3 {
+      font-family: 'Lora', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .checkin-card p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 18px;
+    }
+    .checkin-btns {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 10px;
+    }
+    .yes-btn {
+      background: linear-gradient(135deg, var(--forest-400), var(--forest-500));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: all 0.15s ease;
+    }
+    .yes-btn:active { transform: scale(0.96); }
+    .skip-btn {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .skip-btn:active { opacity: 0.6; }
+
+    /* Activity feed */
+    .feed-section {
+      padding: 20px 20px 0;
+    }
+    .feed-section h4 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .feed-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .feed-item:last-child { border-bottom: none; }
+    .feed-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      font-family: 'Lora', serif;
+    }
+    .feed-avatar.a1 { background: linear-gradient(135deg, #7c9e5c, #4a6a2a); }
+    .feed-avatar.a2 { background: linear-gradient(135deg, #c09060, #8a6040); }
+    .feed-avatar.a3 { background: linear-gradient(135deg, #5c8ea0, #3a6a7e); }
+    .feed-text {
+      flex: 1;
+    }
+    .feed-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .feed-text p strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .feed-text .feed-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* Group card */
+    .group-card {
+      margin: 16px 20px 24px;
+      background: var(--cream-100);
+      border: 1.5px solid var(--cream-300);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .group-card:active {
+      background: var(--cream-200);
+    }
+    .group-card-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .group-icon {
+      font-size: 22px;
+    }
+    .group-card-left div .group-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--cream-900);
+      font-family: 'Lora', serif;
+    }
+    .group-card-left div .group-size {
+      font-size: 11px;
+      color: var(--cream-700);
+      margin-top: 1px;
+    }
+    .group-arrow {
+      font-size: 16px;
+      color: var(--cream-500);
+    }
+
+    /* =================== SCREEN 4: Post-Walk Check-in =================== */
+    #screen4 {
+      background: var(--cream-50);
+    }
+
+    .checkin-header {
+      background: var(--forest-900);
+      padding: 20px 20px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .checkin-header::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 150px; height: 150px;
+      background: radial-gradient(circle, rgba(106,173,106,0.2) 0%, transparent 70%);
+    }
+    .checkin-header .check-done-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(106,173,106,0.2);
+      color: var(--forest-300);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    .checkin-header h2 {
+      font-family: 'Lora', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+    .checkin-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .checkin-body {
+      padding: 24px 20px;
+    }
+
+    .question-block {
+      margin-bottom: 28px;
+    }
+    .question-block label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      font-family: 'Lora', serif;
+    }
+
+    .emoji-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .emoji-chip {
+      background: var(--warm-white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .emoji-chip:active { transform: scale(0.94); }
+    .emoji-chip .e { font-size: 18px; }
+    .emoji-chip .t {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .emoji-chip.selected {
+      background: var(--forest-900);
+      border-color: var(--forest-900);
+    }
+    .emoji-chip.selected .t { color: #fff; }
+
+    .notice-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .notice-chip {
+      background: var(--warm-white);
+      border: 1.5px solid var(--border);
+      border-radius: 24px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .notice-chip:active { transform: scale(0.94); }
+    .notice-chip.selected {
+      background: var(--forest-100);
+      border-color: var(--forest-400);
+      color: var(--forest-800);
+      font-weight: 600;
+    }
+
+    .photo-btn {
+      width: 100%;
+      background: var(--warm-white);
+      border: 1.5px dashed var(--cream-300);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--cream-700);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .photo-btn:active {
+      background: var(--cream-100);
+    }
+
+    /* Preview card */
+    .preview-card {
+      background: var(--forest-900);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-card::after {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 100px; height: 100px;
+      background: radial-gradient(circle, rgba(106,173,106,0.2) 0%, transparent 70%);
+    }
+    .preview-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--forest-300);
+      margin-bottom: 8px;
+    }
+    .preview-text {
+      font-size: 14px;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.55;
+    }
+    .preview-reach {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 8px;
+    }
+
+    .share-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--forest-500), var(--forest-700));
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 17px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.2px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .share-btn:active { transform: scale(0.97); }
+
+    /* =================== Confirmation overlay =================== */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(26, 46, 26, 0.75);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .overlay-sheet {
+      background: var(--warm-white);
+      width: 100%;
+      border-radius: 24px 24px 0 0;
+      padding: 24px 24px 40px;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
+    }
+    .overlay.visible .overlay-sheet {
+      transform: translateY(0);
+    }
+    .overlay-handle {
+      width: 36px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    .celebration-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 14px;
+      animation: bounce-in 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+    @keyframes bounce-in {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .overlay-sheet h3 {
+      font-family: 'Lora', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--forest-900);
+      margin-bottom: 8px;
+    }
+    .overlay-sheet p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .overlay-btn {
+      width: 100%;
+      background: var(--forest-900);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 15px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Bottom safe area spacer */
+    .safe-bottom { height: 24px; }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <!-- Status Bar -->
+  <div class="status-bar" id="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+        <rect x="0" y="3" width="3" height="9" rx="1" fill="#1a2e1a"/>
+        <rect x="4.5" y="2" width="3" height="10" rx="1" fill="#1a2e1a"/>
+        <rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#1a2e1a"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="#1a2e1a" opacity="0.3"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 2.5C10.2 2.5 12.2 3.5 13.5 5.1L15 3.4C13.3 1.3 10.8 0 8 0C5.2 0 2.7 1.3 1 3.4L2.5 5.1C3.8 3.5 5.8 2.5 8 2.5Z" fill="#1a2e1a"/>
+        <path d="M8 5.5C9.4 5.5 10.6 6.1 11.5 7.1L13 5.4C11.7 4 9.9 3 8 3C6.1 3 4.3 4 3 5.4L4.5 7.1C5.4 6.1 6.6 5.5 8 5.5Z" fill="#1a2e1a"/>
+        <circle cx="8" cy="10" r="1.5" fill="#1a2e1a"/>
+      </svg>
+      <svg width="26" height="12" viewBox="0 0 26 12" fill="none">
+        <rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#1a2e1a" stroke-opacity="0.35"/>
+        <rect x="2" y="2" width="17" height="8" rx="2" fill="#1a2e1a"/>
+        <path d="M24 4.5V7.5C24.8 7.2 25.5 6.7 25.5 6C25.5 5.3 24.8 4.8 24 4.5Z" fill="#1a2e1a" opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Screens container -->
+  <div class="screens" id="screens">
+
+    <!-- ========== SCREEN 1: Discovery ========== -->
+    <div class="screen active" id="screen1">
+      <div class="discovery-header">
+        <div class="brand-tag">🌿 Habuild</div>
+        <h1>Clubs</h1>
+        <p>Join a club. Build a habit that lasts.</p>
+      </div>
+
+      <div style="height:16px"></div>
+      <div class="section-label">Featured</div>
+
+      <div class="clubs-scroll">
+        <div class="club-card-featured" onclick="goToScreen(2)">
+          <div class="featured-badge">✨ Featured</div>
+          <span class="club-icon-large">🌿</span>
+          <h2>Walking Club</h2>
+          <p class="club-tagline">Walk 10 minutes after any meal. The simplest habit with the biggest impact.</p>
+          <div class="club-meta">
+            <div class="club-meta-pill">
+              <div class="dot"></div>
+              4,200 active members
+            </div>
+            <div class="club-meta-pill">🔥 Free to join</div>
+          </div>
+          <button class="join-btn-featured">Join Walking Club 🌿</button>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:4px">More Clubs</div>
+
+      <div class="clubs-row">
+        <div class="club-card-small">
+          <span class="club-icon-sm">🫁</span>
+          <h3>Breathing Club</h3>
+          <p>4-7-8 breathing, every evening</p>
+          <div class="members-sm">
+            <div class="dot" style="width:5px;height:5px;border-radius:50%;background:var(--forest-400);animation:pulse-dot 2s infinite"></div>
+            2,180 members
+          </div>
+        </div>
+        <div class="club-card-small">
+          <span class="club-icon-sm">🧘</span>
+          <h3>Meditation Club</h3>
+          <p>5-min morning stillness</p>
+          <span class="coming-soon-badge">Coming soon</span>
+        </div>
+        <div class="club-card-small">
+          <span class="club-icon-sm">📓</span>
+          <h3>Journaling Club</h3>
+          <p>One line before bedtime</p>
+          <span class="coming-soon-badge">Coming soon</span>
+        </div>
+        <div class="club-card-small">
+          <span class="club-icon-sm">🥗</span>
+          <h3>Nutrition Club</h3>
+          <p>Mindful meal check-ins</p>
+          <span class="coming-soon-badge">Coming soon</span>
+        </div>
+      </div>
+
+      <div class="safe-bottom"></div>
+    </div>
+
+    <!-- ========== SCREEN 2: Onboarding ========== -->
+    <div class="screen" id="screen2">
+      <div class="onboard-header">
+        <div class="back-btn" onclick="goToScreen(1)">
+          <svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M7 1L1 7L7 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Clubs
+        </div>
+        <span class="onboard-icon">🌿</span>
+        <h2>Walking Club</h2>
+        <p>Takes 30 seconds to set up</p>
+      </div>
+
+      <div class="onboard-body">
+
+        <div class="onboard-section">
+          <label><span class="emoji">🕐</span> When do you usually have lunch?</label>
+          <div class="chip-row" id="lunch-chips">
+            <div class="chip" onclick="selectChip(this,'lunch-chips')">12 PM</div>
+            <div class="chip selected" onclick="selectChip(this,'lunch-chips')">1 PM</div>
+            <div class="chip" onclick="selectChip(this,'lunch-chips')">2 PM</div>
+            <div class="chip" onclick="selectChip(this,'lunch-chips')">3 PM</div>
+          </div>
+        </div>
+
+        <div class="onboard-section">
+          <label><span class="emoji">🔔</span> Your walk reminder</label>
+          <div class="reminder-box">
+            <span class="bell-icon">🔔</span>
+            <p>I'll remind you <strong>5 minutes before your walk</strong>, every day at 1:05 PM.</p>
+          </div>
+        </div>
+
+        <div class="onboard-section">
+          <label><span class="emoji">📜</span> The one club rule</label>
+          <div class="rule-box">
+            <span class="rule-icon">🌿</span>
+            <p class="rule-text">Walk <span>10 minutes</span> after any meal.<br>Even <span>5 minutes counts</span>. No-Zero Days.</p>
+          </div>
+        </div>
+
+        <div class="onboard-section">
+          <div class="sb-quote-card">
+            <div class="sb-avatar">SB</div>
+            <div class="sb-quote-text">
+              <p>"Post-meal walking reduces blood sugar by 30%. Just 10 minutes. Your body will thank you every single day."</p>
+              <div class="sb-name">Saurabh Bothra · Co-founder, Habuild</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="join-btn-main" onclick="goToScreen(3); triggerRingAnimation();">
+          Join the Club 🌿
+        </button>
+
+      </div>
+      <div class="safe-bottom"></div>
+    </div>
+
+    <!-- ========== SCREEN 3: Club Home ========== -->
+    <div class="screen" id="screen3">
+      <div class="club-home-header">
+        <div class="header-top">
+          <span class="header-back" onclick="goToScreen(1)">←</span>
+          <div class="club-home-title">
+            <h2>Walking Club 🌿</h2>
+            <div class="member-count">4,247 members</div>
+          </div>
+          <span class="header-more">⋯</span>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-val" id="counter-val">1,847</div>
+          <div class="stat-label">walked today</div>
+        </div>
+        <div class="stat-card streak-card">
+          <div class="stat-val">7 🔥</div>
+          <div class="stat-label">your streak</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">44%</div>
+          <div class="stat-label">club walked</div>
+        </div>
+      </div>
+
+      <!-- Community ring -->
+      <div class="community-card">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 80 80">
+            <circle class="ring-track" cx="40" cy="40" r="35"/>
+            <circle class="ring-fill" id="ring-fill" cx="40" cy="40" r="35"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-percent">44%</div>
+            <div class="ring-label-small">today</div>
+          </div>
+        </div>
+        <div class="community-text">
+          <h3>1,847 members walked today</h3>
+          <p>The club is active! 2,400 members have their reminder set for this afternoon.</p>
+        </div>
+      </div>
+
+      <!-- Check-in card -->
+      <div class="checkin-card">
+        <h3>Did you walk today?</h3>
+        <p>Tuesday · Post-lunch walk · 1:00 PM</p>
+        <div class="checkin-btns">
+          <button class="yes-btn" onclick="goToScreen(4)">
+            ✅ Yes, I walked!
+          </button>
+          <button class="skip-btn" onclick="showSkipOverlay()">
+            Skip
+          </button>
+        </div>
+      </div>
+
+      <!-- Activity feed -->
+      <div class="feed-section">
+        <h4>Club Activity</h4>
+        <div class="feed-item">
+          <div class="feed-avatar a1">P</div>
+          <div class="feed-text">
+            <p><strong>Priya</strong> walked today and noticed: birds chirping 🐦</p>
+            <div class="feed-time">2 min ago</div>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-avatar a2">M</div>
+          <div class="feed-text">
+            <p><strong>Meera</strong> just hit a 14-day streak! 🎉</p>
+            <div class="feed-time">18 min ago</div>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-avatar a3">R</div>
+          <div class="feed-text">
+            <p><strong>Raj</strong> walked in silence today 🌳 — feeling grounded</p>
+            <div class="feed-time">34 min ago</div>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-avatar" style="background:linear-gradient(135deg,#a06090,#6a3a5a)">A</div>
+          <div class="feed-text">
+            <p><strong>Anjali</strong> noticed the sky was beautiful today ☁️</p>
+            <div class="feed-time">1 hr ago</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-group card -->
+      <div class="group-card">
+        <div class="group-card-left">
+          <span class="group-icon">🏙️</span>
+          <div>
+            <div class="group-name">Pune Walkers</div>
+            <div class="group-size">Your group · 20 members</div>
+          </div>
+        </div>
+        <span class="group-arrow">→</span>
+      </div>
+
+      <div class="safe-bottom"></div>
+    </div>
+
+    <!-- ========== SCREEN 4: Post-Walk Check-in ========== -->
+    <div class="screen" id="screen4">
+      <div class="checkin-header">
+        <div class="back-btn" onclick="goToScreen(3)">
+          <svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M7 1L1 7L7 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Walking Club
+        </div>
+        <div class="check-done-badge">✅ Walk logged!</div>
+        <h2>How was your walk?</h2>
+        <p>Tell the club — it inspires others to go</p>
+      </div>
+
+      <div class="checkin-body">
+
+        <div class="question-block">
+          <label>How do you feel?</label>
+          <div class="emoji-chips" id="feel-chips">
+            <div class="emoji-chip selected" onclick="selectEmojiChip(this,'feel-chips')">
+              <span class="e">😌</span><span class="t">Light</span>
+            </div>
+            <div class="emoji-chip" onclick="selectEmojiChip(this,'feel-chips')">
+              <span class="e">🌟</span><span class="t">Fresh</span>
+            </div>
+            <div class="emoji-chip" onclick="selectEmojiChip(this,'feel-chips')">
+              <span class="e">😴</span><span class="t">Tired</span>
+            </div>
+            <div class="emoji-chip" onclick="selectEmojiChip(this,'feel-chips')">
+              <span class="e">😐</span><span class="t">Same</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <label>What did you notice?</label>
+          <div class="notice-chips" id="notice-chips">
+            <div class="notice-chip" onclick="toggleNoticeChip(this)">🌳 Trees</div>
+            <div class="notice-chip selected" onclick="toggleNoticeChip(this)">🐦 Birds</div>
+            <div class="notice-chip" onclick="toggleNoticeChip(this)">☁️ Sky</div>
+            <div class="notice-chip" onclick="toggleNoticeChip(this)">🤫 Silence</div>
+            <div class="notice-chip" onclick="toggleNoticeChip(this)">👥 People</div>
+            <div class="notice-chip" onclick="toggleNoticeChip(this)">✨ Other</div>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <label>Share a photo <span style="font-weight:400;color:var(--text-muted);font-family:'Inter',sans-serif;font-size:12px">(optional)</span></label>
+          <div class="photo-btn">
+            <span>📷</span> Add a photo from your walk
+          </div>
+        </div>
+
+        <div class="preview-card" id="preview-card">
+          <div class="preview-label">Your update preview</div>
+          <div class="preview-text" id="preview-text">
+            <strong style="color:var(--forest-300)">Priya</strong> walked today and noticed birds 🐦 — feeling 😌 light
+          </div>
+          <div class="preview-reach">Sharing with 4,247 members of Walking Club</div>
+        </div>
+
+        <button class="share-btn" onclick="showShareOverlay()">
+          <span>Share with Club</span> 🌿
+        </button>
+
+      </div>
+      <div class="safe-bottom"></div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- Skip overlay -->
+  <div class="overlay" id="skip-overlay" onclick="hideOverlay('skip-overlay')">
+    <div class="overlay-sheet" onclick="event.stopPropagation()">
+      <div class="overlay-handle"></div>
+      <span class="celebration-icon">🌿</span>
+      <h3>No worries — No-Zero Days</h3>
+      <p>Even if you skip today, your habit isn't broken. Come back tomorrow. The club will be here.</p>
+      <button class="overlay-btn" onclick="hideOverlay('skip-overlay')">Got it, see you tomorrow</button>
+    </div>
+  </div>
+
+  <!-- Share confirmation overlay -->
+  <div class="overlay" id="share-overlay" onclick="hideOverlay('share-overlay')">
+    <div class="overlay-sheet" onclick="event.stopPropagation()">
+      <div class="overlay-handle"></div>
+      <span class="celebration-icon">🎉</span>
+      <h3>Shared with the club!</h3>
+      <p>Your update is live. You just inspired 4,247 walkers. Keep this streak going — 8 days tomorrow!</p>
+      <button class="overlay-btn" onclick="hideOverlay('share-overlay'); goToScreen(3);">Back to Club Home</button>
+    </div>
+  </div>
+
+</div><!-- /phone-frame -->
+
+<script>
+  let currentScreen = 1;
+
+  function goToScreen(n) {
+    const prev = document.getElementById('screen' + currentScreen);
+    const next = document.getElementById('screen' + n);
+
+    if (n > currentScreen) {
+      prev.classList.add('exit-left');
+      next.classList.remove('exit-left');
+      next.style.transform = 'translateX(100%)';
+      requestAnimationFrame(() => {
+        next.classList.add('active');
+        next.style.transform = '';
+      });
+    } else {
+      prev.classList.remove('active');
+      prev.style.transform = 'translateX(100%)';
+      next.classList.remove('exit-left');
+      next.classList.add('active');
+    }
+
+    setTimeout(() => {
+      if (n > currentScreen) {
+        prev.classList.remove('active');
+        prev.classList.remove('exit-left');
+        prev.style.transform = '';
+      } else {
+        prev.style.transform = '';
+      }
+    }, 420);
+
+    // Status bar color
+    const darkScreens = [2, 3, 4];
+    const sb = document.getElementById('status-bar');
+    if (darkScreens.includes(n)) {
+      sb.classList.add('dark');
+    } else {
+      sb.classList.remove('dark');
+    }
+
+    currentScreen = n;
+
+    // Scroll to top
+    next.scrollTop = 0;
+  }
+
+  function selectChip(el, groupId) {
+    document.querySelectorAll('#' + groupId + ' .chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function selectEmojiChip(el, groupId) {
+    document.querySelectorAll('#' + groupId + ' .emoji-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    updatePreview();
+  }
+
+  function toggleNoticeChip(el) {
+    el.classList.toggle('selected');
+    updatePreview();
+  }
+
+  function updatePreview() {
+    const feelEl = document.querySelector('#feel-chips .emoji-chip.selected');
+    const noticeEls = document.querySelectorAll('#notice-chips .notice-chip.selected');
+
+    const feel = feelEl ? feelEl.querySelector('.e').textContent + ' ' + feelEl.querySelector('.t').textContent.toLowerCase() : '';
+    const notices = Array.from(noticeEls).map(n => n.textContent.trim()).join(', ');
+
+    let text = '<strong style="color:var(--forest-300)">Priya</strong> walked today';
+    if (notices) text += ' and noticed ' + notices;
+    if (feel) text += ' — feeling ' + feel;
+
+    document.getElementById('preview-text').innerHTML = text;
+  }
+
+  function triggerRingAnimation() {
+    setTimeout(() => {
+      const ring = document.getElementById('ring-fill');
+      if (ring) ring.classList.add('animated');
+    }, 300);
+
+    // Animated counter
+    animateCounter('counter-val', 1847, 2094, 1800);
+  }
+
+  function animateCounter(id, from, to, duration) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const start = Date.now();
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const val = Math.round(from + (to - from) * ease);
+      el.textContent = val.toLocaleString('en-IN');
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  function showSkipOverlay() {
+    document.getElementById('skip-overlay').classList.add('visible');
+  }
+  function showShareOverlay() {
+    document.getElementById('share-overlay').classList.add('visible');
+  }
+  function hideOverlay(id) {
+    document.getElementById(id).classList.remove('visible');
+  }
+</script>
+
+</body>
+</html>
