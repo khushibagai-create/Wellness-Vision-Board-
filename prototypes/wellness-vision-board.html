@@ -756,19 +756,6 @@
 </div>
 
 <script>
-  // ── ANALYTICS CONFIG ─────────────────────────────────────────────────────
-  // To enable real analytics, deploy this Google Apps Script as a web app:
-  //
-  //   function doPost(e) {
-  //     var d = JSON.parse(e.postData.contents);
-  //     SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
-  //       .appendRow([new Date(), d.event, d.session, JSON.stringify(d.p)]);
-  //     return ContentService.createTextOutput('ok');
-  //   }
-  //
-  // Then paste the deployed URL below:
-  const ANALYTICS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyU0ZCmLi8wH_N85bt4K8MXWTtU9UAg-ai7OyETeXD74LNFzCASeNTHG3MxoSuBzLGd/exec';
-
   const SESSION_ID = Math.random().toString(36).slice(2, 10);
   const SCREEN_NAMES = {
     1: 'Build Wellness Vision Board',
@@ -798,15 +785,14 @@
 
   function track(event, props) {
     const payload = { ...props, session_id: SESSION_ID, ts: new Date().toISOString() };
-    console.log('[Habuild]', event, payload);
-    // Mixpanel
     try { mixpanel.track(event, payload); } catch(e) {}
-    // LocalStorage backup
-    try {
-      const stored = JSON.parse(localStorage.getItem('hb_events') || '[]');
-      stored.push({ event, p: payload });
-      localStorage.setItem('hb_events', JSON.stringify(stored.slice(-500)));
-    } catch(e) {}
+  }
+
+  function fetchWithTimeout(url, options, ms) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { ...options, signal: controller.signal })
+      .finally(() => clearTimeout(timer));
   }
 
   function goTo(n) {
@@ -822,9 +808,15 @@
     if (n === 3) renderPreview();
     if (n === 4) {
       // Populate Q0 with the user's selected habits
-      document.getElementById('q0').innerHTML = S.habits.map(h =>
-        `<button class="q-opt" onclick="ansQ0(this,'${h.name.replace(/'/g,"\\'")}','${h.emoji}')">${h.emoji} ${h.name}</button>`
-      ).join('');
+      const q0el = document.getElementById('q0');
+      q0el.innerHTML = '';
+      S.habits.forEach(h => {
+        const btn = document.createElement('button');
+        btn.className = 'q-opt';
+        btn.textContent = h.emoji + ' ' + h.name;
+        btn.addEventListener('click', () => ansQ0(btn, h.name, h.emoji));
+        q0el.appendChild(btn);
+      });
       // Reset all answers on re-entry
       S.topHabit = null; S.q1 = null; S.q2 = null;
       document.querySelectorAll('#q1 .q-opt, #q2 .q-opt').forEach(b => b.classList.remove('on'));
@@ -942,46 +934,55 @@
     if (!name) { alert('Please enter your name'); return; }
     if (phone.length < 10) { alert('Please enter a valid 10-digit number'); return; }
 
+    // Prevent double-submit
+    const saveBtn = document.querySelector('#loginCard .btn-primary');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+
     // Add name to board
     const nameEl = document.getElementById('vbName');
     nameEl.textContent = name + "'s Board";
     nameEl.style.display = 'block';
 
-    // Send user preference submission to Habuild event service
-    fetch('https://event-service.habuild.in/public/event-service/v1/no-signup/send-events', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-GRO-CALLER': 'wellness_vision_board' },
-      body: JSON.stringify({
-        events: [{
-          name: 'user_preference_submission',
-          payload: {
-            sessionId: SESSION_ID,
-            name: name,
-            phoneNumber: phone,
-            flowType: 'wellness_vision_board',
-            source: 'wellness_vision_board',
-            allHabits: S.habits.map(h => h.name),
-            properties: {
-              mattersthemost: S.topHabit,
-              duration: S.q1,
-              blocker: S.q2,
-            }
-          }
-        }]
-      }),
-      signal: AbortSignal.timeout(10000),
-    }).catch(() => {});
-
-    // Identify user and set user_id super property for all subsequent events
+    // Identify user in Mixpanel
     try {
       mixpanel.identify('+91' + phone);
       mixpanel.people.set({ $name: name, $phone: '+91' + phone });
       mixpanel.register({ user_id: '+91' + phone });
     } catch(e) {}
     track('click_action', { screen_name: 'Details', type: 'Submit', name, phone_number: '+91' + phone });
-    document.getElementById('loginCard').style.display = 'none';
-    document.getElementById('shareSection').style.display = 'block';
-    track('landed', { screen_name: 'Share Your Board' });
+
+    // Send to Habuild event service
+    fetchWithTimeout(
+      'https://event-service.habuild.in/public/event-service/v1/no-signup/send-events',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-GRO-CALLER': 'wellness_vision_board' },
+        body: JSON.stringify({
+          events: [{
+            name: 'app_user_preference_submission',
+            payload: {
+              sessionId: SESSION_ID,
+              user_name: name,
+              phoneNumber: phone,
+              flowType: 'wellness_vision_board',
+              source: 'wellness_vision_board',
+              allHabits: S.habits.map(h => h.name),
+              properties: {
+                mattersthemost: S.topHabit,
+                duration: S.q1,
+                blocker: S.q2,
+              }
+            }
+          }]
+        }),
+      },
+      10000
+    ).catch(() => {}).finally(() => {
+      document.getElementById('loginCard').style.display = 'none';
+      document.getElementById('shareSection').style.display = 'block';
+      track('landed', { screen_name: 'Share Your Board' });
+    });
   }
 
   function shareWA() {
